@@ -2,7 +2,7 @@
 #include <fstream>
 
 namespace wave {
-    double alfa,beta,q0,y0,px0,py0,dt;
+    double alfa,beta,q0,y0,px0,py0,dt,h0,h1,h2,amx,amc,amy;
     int tmax,tsub,nwpackets;
 
     void read(std::string const& fname) {

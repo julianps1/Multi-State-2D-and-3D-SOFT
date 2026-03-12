@@ -27,5 +27,11 @@ int main(int argc, char* argv[])
               << "  dx   = " << grid::dx
               << "  dy   = " << grid::dy  
               << "  an0  = " << grid::an0 << '\n';
+    std::cout << "Initial masses:\n"
+              << "  Na   = " << wave::h0 
+              << "  H1   = " << wave::h1
+              << "  H2   = " << wave::h2  << '\n';   
+    wave::init_mass(wave::h0,wave::h1,wave::h2);
+
     return 0;
 }

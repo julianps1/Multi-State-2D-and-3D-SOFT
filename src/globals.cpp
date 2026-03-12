@@ -22,6 +22,9 @@ static std::unordered_map<std::string,double*> double_params = {
     {"px0",   &wave::px0},
     {"py0",   &wave::py0},
     {"dt",   &wave::dt},
+    {"h0",   &wave::h0},
+    {"h1",   &wave::h1},
+    {"h2",   &wave::h2},
 };
 
 static std::unordered_map<std::string,int*> int_params = {

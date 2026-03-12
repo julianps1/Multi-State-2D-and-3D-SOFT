@@ -5,7 +5,8 @@ CXX      := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -Iinclude
 
 # sources and derived object names
-SRCS   := src/main.cpp src/grid.cpp src/wave.cpp src/globals.cpp
+#SRCS   := src/main.cpp src/grid.cpp src/wave.cpp src/globals.cpp
+SRCS   := $(wildcard src/*.cpp)
 OBJS   := $(SRCS:.cpp=.o)
 
 # executable name
