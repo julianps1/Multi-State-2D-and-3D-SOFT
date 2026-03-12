@@ -4,7 +4,7 @@
 constexpr int ni = 256, nj = 256, ns = 2;
 constexpr char defaultInputFile[] = "INq";
 
-namespace wave {
+namespace dyn {
     using real = double;
     using cplx = std::complex<double>;
 
@@ -25,5 +25,6 @@ namespace wave {
     extern cplx psi0[ni][nj][ns];
 
     void init();            // set im, compute pi, N2, …
+    void read_input(const std::string &fname);
 }
 
