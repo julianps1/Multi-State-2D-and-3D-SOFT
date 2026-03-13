@@ -2,11 +2,6 @@
 #include <fstream>
 
 namespace wave {
-    double alfa,beta,q0,y0,px0,py0,dt,h0,h1,h2,amx,amc,amy;
+    double alfa,beta,q0,y0,px0,py0,h0,h1,h2,amx,amc,amy,dt,dtsub,dt2;
     int tmax,tsub,nwpackets;
-
-    void read(std::string const& fname) {
-        std::ifstream ifs(fname);
-        // parse file and assign to alfa, … etc.
-    }
 }

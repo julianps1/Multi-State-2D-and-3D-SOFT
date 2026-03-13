@@ -6,7 +6,9 @@
 int main(int argc, char* argv[])
 {
     // read whatever input you have;
-    dyn::read_input(defaultInputFile);
+    init(defaultInputFile);
+    wave::dtsub = wave::dt/wave::tsub;
+    wave::dt2 = wave::dtsub * 0.5;
 
     std::cout << "wave parameters:\n"
               << "  alfa = " << wave::alfa
@@ -15,18 +17,18 @@ int main(int argc, char* argv[])
               << "  y0   = " << wave::y0 << '\n'
               << "  px0  = " << wave::px0
               << "  py0  = " << wave::py0 
-              << "  dt   = " << wave::dt << '\n'
+              << "  nwpackets  = " << wave::nwpackets << '\n';
+    std::cout << "Propogation parameters:\n"
+              << "  dt   = " << wave::dt 
               << "  tsub  = " << wave::tsub
               << "  tmax  = " << wave::tmax 
-              << "  nwpackets  = " << wave::nwpackets << '\n';
+              << "  dtsub = " << wave::dtsub
+              << "  dt2   = " << wave::dt2 << '\n';
     std::cout << "grid extents:\n"
               << "  xmin = " << grid::xmin
               << "  xmax = " << grid::xmax 
               << "  ymin = " << grid::ymin
-              << "  ymax = " << grid::ymax << '\n'
-              << "  dx   = " << grid::dx
-              << "  dy   = " << grid::dy  
-              << "  an0  = " << grid::an0 << '\n';
+              << "  ymax = " << grid::ymax << '\n';
     std::cout << "Initial masses:\n"
               << "  Na   = " << wave::h0 
               << "  H1   = " << wave::h1

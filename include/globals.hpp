@@ -1,30 +1,11 @@
 #pragma once
 #include <complex>
 
-constexpr int ni = 256, nj = 256, ns = 2;
+constexpr int ni = 256, nj = 256, ns = 2; //for now fixed grid and states
 constexpr char defaultInputFile[] = "INq";
 
-namespace dyn {
-    using real = double;
-    using cplx = std::complex<double>;
+using cplx = std::complex<double>;
+constexpr cplx im = {0.0, 1.0}; //define imaginary unit 
 
-    extern real ak2[ni][nj];
-    extern real xg[ni];
-    extern real yg[nj];
-
-    extern real v[ni][nj][ns][ns];
-    extern real vcos[ni][nj];
-    extern real vsin[ni][nj];
-
-    extern cplx c[ns];
-    extern cplx vd[ni][nj][ns];
-
-    extern cplx im;
-    extern cplx psi[ni][nj][ns];
-    extern cplx ksi[ni][nj][ns];
-    extern cplx psi0[ni][nj][ns];
-
-    void init();            // set im, compute pi, N2, …
-    void read_input(const std::string &fname);
-}
+void init(const std::string &fname); //read input, compute pi
 

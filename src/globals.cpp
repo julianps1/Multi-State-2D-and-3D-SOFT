@@ -12,9 +12,6 @@ static std::unordered_map<std::string,double*> double_params = {
     {"ymin", &grid::ymin},
     {"xmax", &grid::xmax},
     {"ymax", &grid::ymax},
-    {"dx",   &grid::dx},
-    {"dy",   &grid::dy},
-    {"an0",  &grid::an0},
     {"alfa", &wave::alfa},
     {"beta", &wave::beta},
     {"q0",   &wave::q0},
@@ -33,33 +30,11 @@ static std::unordered_map<std::string,int*> int_params = {
     {"nwpackets",   &wave::nwpackets},
 }; 
 
-namespace dyn {
-
-real ak2[ni][nj];
-real xg[ni];
-real yg[nj];
-
-real v[ni][nj][ns][ns];
-real vcos[ni][nj];
-real vsin[ni][nj];
-
-cplx c[ns];
-cplx vd[ni][nj][ns];
-
-cplx im;
-cplx psi[ni][nj][ns];
-cplx ksi[ni][nj][ns];
-cplx psi0[ni][nj][ns]; //For now grid size is fixed
-
-void init()
+void init(const std::string &fname)
  {
-    im = {0.0, 1.0};
-    constexpr real pi = 2.0 * std::asin(1.0);
-    // …other setup, maybe read from file…
- };
+    
+    constexpr double pi = 2.0 * std::asin(1.0);
 
-void read_input(const std::string &fname)
- {
     std::ifstream ifs(fname);
     if (!ifs) throw std::runtime_error("cannot open " + fname);
 
@@ -81,4 +56,3 @@ void read_input(const std::string &fname)
       }
     }
   }
-}
