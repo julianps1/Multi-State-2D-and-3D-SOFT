@@ -28,13 +28,12 @@ static std::unordered_map<std::string,int*> int_params = {
     {"tsub",   &wave::tsub},
     {"tmax",   &wave::tmax},
     {"nwpackets",   &wave::nwpackets},
+    {"istate", &grid::istate},
 }; 
 
 void init(const std::string &fname)
  {
     
-    constexpr double pi = 2.0 * std::asin(1.0);
-
     std::ifstream ifs(fname);
     if (!ifs) throw std::runtime_error("cannot open " + fname);
 

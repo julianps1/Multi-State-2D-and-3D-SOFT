@@ -4,7 +4,8 @@
 #include "globals.hpp"
 
 namespace grid {
-    extern double xmin, ymin, xmax, ymax, dx, dy; 
+    extern double xmin, ymin, xmax, ymax, dx, dy,an0; 
+    extern int istate,iwa;
 
     struct GridData
 	{
@@ -25,7 +26,9 @@ namespace grid {
 	cplx psi0[ni][nj][ns];
 	};
     
-     void init_grid(GridData &gridd);
+     void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0);
+     void init_psi(int istate, GridData &gridd);
+     void print_psi(int iwa, GridData &gridd);
 }
 
 extern grid::GridData gridd;

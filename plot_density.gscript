@@ -1,0 +1,23 @@
+# input file passed from command line
+file = ARG1
+base = substr(file,1,strlen(file)-4)
+
+set terminal pngcairo size 800,600
+set xlabel "x"
+set ylabel "y"
+set view map
+set size ratio -1
+set pm3d map
+set palette rgb 33,13,10
+set colorbox
+set cblabel "|ψ|^2"
+set cbrange [0:1e-3]
+
+
+# state 1
+set output base."_state0.png" 
+splot file using 1:2:3 with pm3d
+
+# state 2
+set output base."_state1.png"
+splot file using 1:2:4 with pm3d
