@@ -1,0 +1,14 @@
+# Ignore data files
+*.dat
+
+# Ignore generated images
+*.png
+
+# Ignore object files
+*.o
+
+# Ignore executable
+sim
+
+# Ignore output directory
+output/
