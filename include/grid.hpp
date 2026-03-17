@@ -23,12 +23,17 @@ namespace grid {
 
 	cplx psi[ni][nj][ns];
 	cplx ksi[ni][nj][ns];
+	cplx vpsi[ni][nj][ns];
 	cplx psi0[ni][nj][ns];
 	};
     
      void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0);
      void init_psi(int istate, GridData &gridd);
      void print_psi(int iwa, GridData &gridd);
+     void pot_psi(GridData &gridd);
+     void pot_diag(GridData &gridd);
+     void write_potential(GridData &gridd);
+     
 }
 
 extern grid::GridData gridd;

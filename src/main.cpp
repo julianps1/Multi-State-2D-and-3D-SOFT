@@ -45,6 +45,8 @@ int main()
     grid::init_psi(grid::istate, gridd);
     grid::iwa = 0;
     grid::print_psi(grid::iwa, gridd);
-   
+    grid::pot_psi(gridd);
+    grid::pot_diag(gridd);
+    grid::write_potential(gridd);
     return 0;
 }

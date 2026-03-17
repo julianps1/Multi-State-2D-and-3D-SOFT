@@ -3,6 +3,10 @@
 #include <cmath>
 #include "wave.hpp"
 
+namespace wave {
+    double alfa,beta,q0,y0,px0,py0,h0,h1,h2,amx,amc,amy,dt,dtsub,dt2;
+    int tmax,tsub,nwpackets;
+}
 
 //Initialize the masses
 namespace wave {
