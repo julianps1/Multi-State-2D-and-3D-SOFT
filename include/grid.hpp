@@ -25,6 +25,7 @@ namespace grid {
 	cplx ksi[ni][nj][ns];
 	cplx vpsi[ni][nj][ns];
 	cplx psi0[ni][nj][ns];
+        cplx tpsi[ni][nj];
 	};
     
      void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0);

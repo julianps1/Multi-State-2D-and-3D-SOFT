@@ -74,7 +74,7 @@ namespace grid {
 			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t1 * t1;
 			 }
 			double t2 = std::abs(gridd.yg[j]) - rim;
-			if (t2 > 0) double theta = 0.5 * std::atan2(2.0 * v12, dv);
+			if (t2 > 0) 
 			 {
 			  gridd.vd[i][j][0] = gridd.vd[i][j][0] - im * dim * t2 * t2;
 			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t2 * t2;

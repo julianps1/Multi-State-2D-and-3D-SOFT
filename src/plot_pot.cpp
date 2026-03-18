@@ -23,15 +23,17 @@ void write_potential(GridData &gridd)
     {
         for (int j = 0; j < nj; ++j)
         {
-            outfile << gridd.xg[i] << " "
-                    << gridd.yg[j] << " "
-                    << gridd.v[i][j][0][0] << " "
-                    << gridd.v[i][j][1][1] << " " 
-		    << gridd.v[i][j][0][1] << " "  
-		    << gridd.vd[i][j][0] << " "
-		    << gridd.vd[i][j][1] << " "
-		    << gridd.vcos[i][j] << " "
-		    << gridd.vsin[i][j] << "\n";
+		outfile << gridd.xg[i] << " "
+        		<< gridd.yg[j] << " "
+		        << gridd.v[i][j][0][0] << " "
+		        << gridd.v[i][j][1][1] << " "
+		        << gridd.v[i][j][0][1] << " "
+		        << std::real(gridd.vd[i][j][0]) << " "
+		        << std::imag(gridd.vd[i][j][0]) << " "
+		        << std::real(gridd.vd[i][j][1]) << " "
+		        << std::imag(gridd.vd[i][j][1]) << " "
+		        << gridd.vcos[i][j] << " "
+		        << gridd.vsin[i][j] << "\n";
         }
 
         // blank line for gnuplot grid formatting

@@ -3,6 +3,7 @@
 # compiler + flags
 CXX      := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -Iinclude
+LDFLAGS = -lfftw3 -lm
 
 # sources and derived object names
 #SRCS   := src/main.cpp src/grid.cpp src/wave.cpp src/globals.cpp

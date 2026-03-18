@@ -1,0 +1,91 @@
+#include <iostream>
+#include "grid.hpp"
+#include "wave.hpp"
+#include "globals.hpp"
+#include <fstream>
+#include <string>
+#include <filesystem>
+#include <cmath>
+#include <fftw3.h>
+
+
+namespace grid {
+
+#include <fftw3.h>
+#include <complex>
+
+namespace grid {
+
+
+void FFT 
+
+void kinetic_step(GridData &gridd)
+{
+    int N = ni * nj;
+
+    // allocate FFTW arrays
+    fftw_complex* data = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+
+    // create plans
+    fftw_plan forward = fftw_plan_dft_2d(ni, nj, data, data, FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_plan backward = fftw_plan_dft_2d(ni, nj, data, data, FFTW_BACKWARD, FFTW_ESTIMATE);
+
+    // --- copy psi → data ---
+    for (int i = 0; i < ni; ++i)
+    {
+        for (int j = 0; j < nj; ++j)
+        {
+            int idx = i * nj + j;
+
+            data[idx][0] = std::real(gridd.psi[i][j][ns]);
+            data[idx][1] = std::imag(gridd.psi[i][j][ns]);
+        }
+    }
+
+    // --- forward FFT ---
+    fftw_execute(forward);
+
+    // --- multiply by ak2 ---
+    for (int i = 0; i < ni; ++i)
+    {
+        for (int j = 0; j < nj; ++j)
+        {
+            int idx = i * nj + j;
+
+            double factor = gridd.ak2[i][j];
+
+            data[idx][0] *= factor;
+            data[idx][1] *= factor;
+        }
+    }
+
+    // --- inverse FFT ---
+    fftw_execute(backward);
+
+    // --- normalize ---
+    double norm = 1.0 / (ni * nj);
+
+    for (int i = 0; i < ni; ++i)
+    {
+        for (int j = 0; j < nj; ++j)
+        {
+            int idx = i * nj + j;
+
+            gridd.tpsi[i][j] = std::complex<double>(
+                data[idx][0] * norm,
+                data[idx][1] * norm
+            );
+        }
+    }
+
+    // cleanup
+    fftw_destroy_plan(forward);
+    fftw_destroy_plan(backward);
+    fftw_free(data);
+}
+
+}
+
+
+
+}
