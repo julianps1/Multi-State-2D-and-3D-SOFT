@@ -3,6 +3,10 @@
 #include <array>
 #include "globals.hpp"
 
+namespace fft {
+    struct FFT2D;
+}
+
 namespace grid {
     extern double xmin, ymin, xmax, ymax, dx, dy,an0; 
     extern int istate,iwa;
@@ -26,6 +30,7 @@ namespace grid {
 	cplx vpsi[ni][nj][ns];
 	cplx psi0[ni][nj][ns];
         cplx tpsi[ni][nj];
+	cplx tmp[ni][nj];
 	};
     
      void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0);
@@ -34,7 +39,10 @@ namespace grid {
      void pot_psi(GridData &gridd);
      void pot_diag(GridData &gridd);
      void write_potential(GridData &gridd);
-     
+     void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
+     cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
+     cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);
+     void Ham(fft::FFT2D &f2d, GridData &gridd);
 }
 
 extern grid::GridData gridd;

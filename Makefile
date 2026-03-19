@@ -17,7 +17,7 @@ all: $(PROG)
 
 # link
 $(PROG): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 # compile rule for .cpp files
 %.o: %.cpp

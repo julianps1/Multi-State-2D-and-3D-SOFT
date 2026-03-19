@@ -1,11 +1,13 @@
 #include "grid.hpp"
 #include "wave.hpp"
 #include "globals.hpp"
+#include "FFT2D.hpp"
 #include <iostream>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <fftw3.h>
 
 int main()
 {
@@ -40,13 +42,16 @@ int main()
               << "  H1   = " << wave::h1
               << "  H2   = " << wave::h2  << '\n';   
     //Initialize
+    fft::FFT2D(ni,nj); //Initialize FFT
+    
     wave::init_mass(wave::h0,wave::h1,wave::h2);
     grid::init_grid(grid::xmin,grid::ymin,grid::xmax,grid::ymax, gridd, grid::an0);
     grid::init_psi(grid::istate, gridd);
     grid::iwa = 0;
     grid::print_psi(grid::iwa, gridd);
-    grid::pot_psi(gridd);
+    grid::Ham(f2d, gridd); //Initialize potential and Initial E
     grid::pot_diag(gridd);
     grid::write_potential(gridd);
+
     return 0;
 }
