@@ -39,6 +39,9 @@ namespace grid {
      void pot_psi(GridData &gridd);
      void pot_diag(GridData &gridd);
      void write_potential(GridData &gridd);
+     void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd, double ts);
+     void apply_potential_phase(GridData &gridd, double ts);
+     void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d);
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
      cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
      cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);
