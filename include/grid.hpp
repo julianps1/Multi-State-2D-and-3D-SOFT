@@ -8,8 +8,8 @@ namespace fft {
 }
 
 namespace grid {
-    extern double xmin, ymin, xmax, ymax, dx, dy,an0; 
-    extern int istate,iwa;
+    extern double xmin, ymin, xmax, ymax, dx, dy, an0; 
+    extern int istate,iwa,pot_name;
 
     struct GridData
 	{
@@ -37,6 +37,8 @@ namespace grid {
      void init_psi(int istate, GridData &gridd);
      void print_psi(int iwa, GridData &gridd);
      void pot_psi(GridData &gridd);
+     void pot_Ferretti(GridData &gridd);
+     void pick_pot(int pot_name, GridData &gridd);
      void pot_diag(GridData &gridd);
      void write_potential(GridData &gridd);
      void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd, double ts);
@@ -47,7 +49,7 @@ namespace grid {
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
      cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
      cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);
-     void Ham(fft::FFT2D &f2d, GridData &gridd);
+     void Ham(fft::FFT2D &f2d, GridData &gridd, int pot_name);
 }
 
 extern grid::GridData gridd;

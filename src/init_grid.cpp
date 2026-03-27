@@ -10,7 +10,7 @@ grid::GridData gridd;
 
 namespace grid {
 	double xmin, ymin, xmax, ymax, dx, dy, an0;
-    int istate, iwa;
+    int istate, iwa, pot_name;
 
 	void init_psi(int istate, GridData &gridd)
        {	

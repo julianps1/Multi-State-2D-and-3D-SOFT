@@ -15,6 +15,7 @@ int main()
     init(defaultInputFile);
     wave::dtsub = wave::dt/wave::tsub;
     std::filesystem::create_directory("output");
+    std::filesystem::remove("output/correl.dat");
     wave::dt2 = wave::dtsub * 0.5;
     
     std::cout << "wave parameters:\n"
@@ -41,6 +42,8 @@ int main()
               << "  Na   = " << wave::h0 
               << "  H1   = " << wave::h1
               << "  H2   = " << wave::h2  << '\n';   
+    std::cout << "Potential:\n"
+              << "  pot_name = " << grid::pot_name << '\n';
     //Initialize
     fft::FFT2D(ni,nj); //Initialize FFT
     
@@ -49,10 +52,9 @@ int main()
     grid::init_psi(grid::istate, gridd);
     grid::iwa = 0;
     grid::print_psi(grid::iwa, gridd);
-    grid::Ham(f2d, gridd); //Initialize potential and Initial E
+    grid::Ham(f2d, gridd, grid::pot_name); //Initialize potential and Initial E
     grid::pot_diag(gridd);
     grid::write_potential(gridd);
-
 
     //Time loop
     double t = 0.0;

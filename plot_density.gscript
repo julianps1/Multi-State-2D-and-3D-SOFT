@@ -8,10 +8,11 @@ set ylabel "y"
 set view map
 set size ratio -1
 set pm3d map
-set palette rgb 33,13,10
+set palette rgb 21,22,23
 set colorbox
 set cblabel "|ψ|^2"
-set cbrange [0:1e-3]
+#set logscale cb
+#set cbrange [0:1e-3]
 
 
 # state 1
