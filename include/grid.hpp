@@ -43,7 +43,7 @@ namespace grid {
      void apply_potential_phase(GridData &gridd, double ts);
      void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d);
      void potential_step(GridData &gridd, int n);
-     void corr(GridData &gridd);
+     void corr(GridData &gridd, double t);
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
      cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
      cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);

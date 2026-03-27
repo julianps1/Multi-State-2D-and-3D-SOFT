@@ -63,15 +63,7 @@ int main()
             grid::split(wave::dtsub, wave::dt2, gridd, f2d);
             t += wave::dtsub;
         }
-        grid::corr(gridd);
-
-        std::string filename = "output/correl.dat";
-        std::ofstream outfile(filename, std::ios::app);
-        outfile << t << " " << std::real(gridd.c[0]) 
-                     << " " << std::imag(gridd.c[0]) 
-                     << " " << std::real(gridd.c[1])
-                     << " " << std::imag(gridd.c[1])
-                     << '\n';
+        grid::corr(gridd, t);
 
         if (it % wave::nwpackets == 0)
         {

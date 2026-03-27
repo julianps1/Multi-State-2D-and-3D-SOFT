@@ -4,12 +4,44 @@
 #include "globals.hpp"
 #include <fstream>
 #include <cmath>
+#include <filesystem>
 
 grid::GridData gridd;
 
 namespace grid {
 	double xmin, ymin, xmax, ymax, dx, dy, an0;
-        int istate, iwa;
+    int istate, iwa;
+
+	void init_psi(int istate, GridData &gridd)
+       {	
+		double cc = 0.0;
+
+		for (int i = 0; i < ni; ++i)
+		{
+		    double x = xmin + dx * i;
+		    double xx = x - wave::q0;
+		    gridd.xg[i] = x;
+
+		    for (int j = 0; j < nj; ++j)
+    		{
+		        double y = ymin + dy * j;
+		        double yy = y - wave::y0;
+			gridd.yg[j] = y;
+		        
+			gridd.psi[i][j][istate] =
+		            std::exp(-wave::alfa*xx*xx - wave::beta*yy*yy
+                	     + im*wave::px0*xx
+	                     + im*wave::py0*yy)
+        		     * std::sqrt(an0);
+
+		        cc += std::norm(gridd.psi[i][j][istate]);
+
+		        gridd.psi0[i][j][istate] = gridd.psi[i][j][istate];
+    		}
+		}
+	    std::cout << "Norm =" << cc << '\n';
+	   }
+
 	void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0)
           {
                 double alfa = wave::alfa;
@@ -51,5 +83,81 @@ namespace grid {
 		std::cout <<"Grid Spacing \n"
 			  <<" dx = " <<dx
 			  <<" dy = " <<dy << '\n';
+	   }
+
+	   	void pot_diag(GridData &gridd)
+          {
+
+		std::filesystem::create_directory("output");
+
+		    std::string filename = "output/theta.dat";
+		    std::ofstream outfile(filename);
+
+		    if (!outfile)
+		    {
+		        std::cerr << "Error opening " << filename << "\n";
+		        return;
+		    }
+
+		constexpr double eps = 1e-12;
+
+		for (int i = 0; i < ni; ++i)
+		{
+		for (int j = 0; j < nj; ++j)
+    		{
+    			double v11 = gridd.v[i][j][0][0];
+			double v22 = gridd.v[i][j][1][1];
+			double v12 = gridd.v[i][j][0][1];
+			
+			//diagonalize
+			
+			double dv = v11-v22;
+			if (std::abs(dv) < eps) { dv = eps; }
+			//double tgh = 2 * v12/dv; 
+                        //double theta = 0.5 * std::atan(tgh);
+                        double theta = 0.5 * std::atan2(2.0 * v12, dv);
+
+			//check theta is smooth
+			outfile << gridd.xg[i] << " "
+                                << gridd.yg[j] << " "
+                                << theta << "\n";
+
+			gridd.vcos[i][j] = std::cos(theta);
+			gridd.vsin[i][j] = std::sin(theta);
+
+			double sqrtv12 = std::sqrt(dv * dv + 4.0 * v12 * v12);
+			gridd.vd[i][j][0] = 0.5 * (v11 + v22 - sqrtv12);
+			gridd.vd[i][j][1] = 0.5 * (v11 + v22 + sqrtv12);
+		}
+		// blank line for gnuplot grid formatting
+	        outfile << "\n";
+		}
+
+
+		//Add imaginary potential
+		
+		constexpr double rim = 0.0;
+		constexpr double dim = 0.0;
+
+		for (int i = 0; i < ni; ++i)
+		{
+		for (int j = 0; j < nj; ++j)
+    		{
+			double t1 = std::abs(gridd.xg[i]) - rim;
+			if (t1 > 0) 
+			 {
+			  gridd.vd[i][j][0] = gridd.vd[i][j][0] - im * dim * t1 * t1;
+			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t1 * t1;
+			 }
+			double t2 = std::abs(gridd.yg[j]) - rim;
+			if (t2 > 0) 
+			 {
+			  gridd.vd[i][j][0] = gridd.vd[i][j][0] - im * dim * t2 * t2;
+			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t2 * t2;
+			 }
+			
+	    	}
+		}
+		
 	   }
 }
