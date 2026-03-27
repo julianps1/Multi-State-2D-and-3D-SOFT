@@ -53,5 +53,31 @@ int main()
     grid::pot_diag(gridd);
     grid::write_potential(gridd);
 
+
+    //Time loop
+    double t = 0.0;
+    for (int it = 0; it < wave::tmax; ++it)
+    {
+        for (int isub = 0; isub < wave::tsub; ++isub)
+        {
+            grid::split(wave::dtsub, wave::dt2, gridd, f2d);
+            t += wave::dtsub;
+        }
+        grid::corr(gridd);
+
+        std::string filename = "output/correl.dat";
+        std::ofstream outfile(filename, std::ios::app);
+        outfile << t << " " << std::real(gridd.c[0]) 
+                     << " " << std::imag(gridd.c[0]) 
+                     << " " << std::real(gridd.c[1])
+                     << " " << std::imag(gridd.c[1])
+                     << '\n';
+
+        if (it % wave::nwpackets == 0)
+        {
+            grid::iwa += 1;
+            grid::print_psi(grid::iwa, gridd);
+        }        
+    }    
     return 0;
 }

@@ -94,4 +94,21 @@ void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d) //Propagate 
 
 }
 
+void corr(GridData &gridd)
+{
+
+    for (int n = 0; n < ns; ++n)
+    {
+        cplx sum = 0.0;
+        for (int i = 0; i < ni; ++i)
+        {
+            for (int j = 0; j < nj; ++j)
+            {
+                sum += std::conj(gridd.psi0[i][j][n]) * gridd.psi[i][j][n];
+            }
+        }
+        gridd.c[n] = sum;
+    }
+
+}
 }
