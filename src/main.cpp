@@ -7,16 +7,23 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <iomanip>
+#include <algorithm>
+#include <chrono>
+#include <ctime>
 #include <fftw3.h>
 
 int main()
 {
+ 
+    double cpu_start = std::clock();
+    auto wall_start = std::chrono::steady_clock::now();
+ 
     // read whatever input you have;
     init(defaultInputFile);
     wave::dtsub = wave::dt/wave::tsub;
+    std::filesystem::remove_all("output");
     std::filesystem::create_directory("output");
-    std::filesystem::remove("output/correl.dat");
-    std::filesystem::remove("output/crosscorrel.dat");
     wave::dt2 = wave::dtsub * 0.5;
     
     std::cout << "wave parameters:\n"
@@ -45,6 +52,7 @@ int main()
               << "  H2   = " << wave::h2  << '\n';   
     std::cout << "Potential:\n"
               << "  pot_name = " << grid::pot_name << '\n';
+    std::cout << "Pi = " << pi << '\n';
     //Initialize
     fft::FFT2D(ni,nj); //Initialize FFT
     
@@ -66,8 +74,23 @@ int main()
 
     //Time loop
     double t = 0.0;
-    for (int it = 0; it < wave::tmax; ++it)
+    // Progress bar setup
+    int total_steps = wave::tmax;
+    int update_step = std::max(1, total_steps / 100); // update ~every 1%
+    const int barWidth = 50;
+    std::cout << "Simulation progress:" << std::endl;
+    for (int it = 0; it < total_steps; ++it)
     {
+        if ((it % update_step) == 0 || it == total_steps - 1)
+        {
+            int pct = (100 * it) / std::max(1, total_steps);
+            int pos = (pct * barWidth) / 100;
+            std::cout << "\r[";
+            for (int i = 0; i < pos; ++i) std::cout << '=';
+            for (int i = pos; i < barWidth; ++i) std::cout << ' ';
+            std::cout << "] " << std::setw(3) << pct << "% (" << it << "/" << total_steps << ")";
+            std::cout << std::flush;
+        }
         for (int isub = 0; isub < wave::tsub; ++isub)
         {
             grid::split(wave::dtsub, wave::dt2, gridd, f2d);
@@ -100,6 +123,16 @@ int main()
             }
         }
     }
+    std::cout << std::endl;
     std::cout << "Final Norm = " << norm << '\n';
+
+    // Timing end and report
+    auto wall_end = std::chrono::steady_clock::now();
+    std::clock_t cpu_end = std::clock();
+    double wall_secs = std::chrono::duration<double>(wall_end - wall_start).count();
+    double cpu_secs = double(cpu_end - cpu_start) / CLOCKS_PER_SEC;
+    std::cout << std::fixed << std::setprecision(3);
+    std::cout << "Wall time: " << wall_secs << " s\n";
+    std::cout << "CPU time:  " << cpu_secs << " s\n";
     return 0;
 }
