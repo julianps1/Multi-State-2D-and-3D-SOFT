@@ -41,6 +41,19 @@ namespace grid {
 		}
 	    std::cout << "Norm =" << cc << '\n';
 	   }
+	void init_psiref(int istate, GridData &gridd)
+	//Modify depending on model of interest
+	   	{
+			//Mirror image of psi for double well problem
+			for (int i = 0; i < ni; ++i)
+			{
+				int idx = ni - 1 - i;
+				for (int j = 0; j < nj; ++j)
+				{
+					gridd.psiref[i][j][istate] = gridd.psi0[idx][j][istate];
+				}
+			}
+		}
 
 	void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0)
           {

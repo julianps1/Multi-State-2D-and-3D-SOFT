@@ -16,6 +16,7 @@ int main()
     wave::dtsub = wave::dt/wave::tsub;
     std::filesystem::create_directory("output");
     std::filesystem::remove("output/correl.dat");
+    std::filesystem::remove("output/crosscorrel.dat");
     wave::dt2 = wave::dtsub * 0.5;
     
     std::cout << "wave parameters:\n"
@@ -50,11 +51,16 @@ int main()
     wave::init_mass(wave::h0,wave::h1,wave::h2);
     grid::init_grid(grid::xmin,grid::ymin,grid::xmax,grid::ymax, gridd, grid::an0);
     grid::init_psi(grid::istate, gridd);
+    grid::init_psiref(grid::istate, gridd);
     grid::iwa = 0;
     grid::print_psi(grid::iwa, gridd);
+    grid::print_init_psi(gridd); //Print the reference functions for correlations
     grid::Ham(f2d, gridd, grid::pot_name); //Initialize potential and Initial E
     grid::pot_diag(gridd);
     grid::write_potential(gridd);
+
+    //DOUBE WELL INITIALIZE WEIGHTS FOR RXN PROB
+    grid::RxnWeight(gridd);
 
     //Time loop
     double t = 0.0;
@@ -66,6 +72,8 @@ int main()
             t += wave::dtsub;
         }
         grid::corr(gridd, t);
+        grid::crosscorr(gridd, t);
+        grid::RxnProb(gridd, t);
 
         if (it % wave::nwpackets == 0)
         {

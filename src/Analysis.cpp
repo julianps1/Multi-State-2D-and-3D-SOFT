@@ -48,6 +48,36 @@ void write_potential(GridData &gridd)
     }
 }
 
+//Print reference Psi's
+	void print_init_psi(GridData &gridd)
+          {
+	   std::string filename = "output/psiref.dat";
+	   std::ofstream outfile(filename);
+
+		for (int i = 0; i < ni; ++i)
+		{
+
+		    for (int j = 0; j < nj; ++j)
+    		    {
+
+			//for (int n = 0; n < ns; ++n)
+		        //{
+			// rho = rho + std::norm(gridd.psi[i][j][n]);
+			//}
+			//if (rho > 1e-6)
+			// {
+				 outfile << gridd.xg[i] << " "
+        			   << gridd.yg[j] << " "
+			           << std::norm(gridd.psi0[i][j][0]) << " "
+			           << std::norm(gridd.psiref[i][j][0])
+			           << "\n";
+			 //} 
+    		     }
+                    // blank line after each i row
+                       outfile << "\n";
+                  }
+	    }
+
 // print wf denisty to file
 	void print_psi(int iwa, GridData &gridd)
           {
@@ -59,7 +89,6 @@ void write_potential(GridData &gridd)
 
 		    for (int j = 0; j < nj; ++j)
     		    {
-			double rho = 0.0;
 
 			//for (int n = 0; n < ns; ++n)
 		        //{
@@ -105,4 +134,72 @@ void write_potential(GridData &gridd)
 
     }
 
+    void crosscorr(GridData &gridd, double t)
+    {
+
+    for (int n = 0; n < ns; ++n)
+    {
+        cplx sum = 0.0;
+        for (int i = 0; i < ni; ++i)
+        {
+            for (int j = 0; j < nj; ++j)
+            {
+                sum += std::conj(gridd.psiref[i][j][n]) * gridd.psi[i][j][n];
+            }
+        }
+        gridd.c[n] = sum;
+    }
+
+        std::string filename = "output/crosscorrel.dat";
+        std::ofstream outfile(filename, std::ios::app);
+        outfile << t << " " << std::real(gridd.c[0]) 
+                     << " " << std::imag(gridd.c[0]) 
+                     << " " << std::real(gridd.c[1])
+                     << " " << std::imag(gridd.c[1])
+                     << '\n';
+
+    }
+
+    void RxnWeight(GridData &gridd)
+    //Define the reaction region with a weight function (for double well system)
+    {
+        for (int i=0; i < ni; ++i)
+        {
+            if (gridd.xg[i]>0)
+            {
+                gridd.wt[i] = 1;
+            }
+            else
+            {
+                gridd.wt[i] = 0; 
+            }
+        }
+    }
+
+    void RxnProb(GridData &gridd, double t)
+    //For the double well system
+    {
+
+    for (int n = 0; n < ns; ++n)
+    {
+        cplx sum = 0.0;
+        for (int i = 0; i < ni; ++i)
+        {
+            for (int j = 0; j < nj; ++j)
+            {
+                sum += std::conj(gridd.psi[i][j][n]) * gridd.psi[i][j][n] * gridd.wt[i]; //Sum with weighting funciton (1 in reaction region 0 otherwise)
+            }
+        }
+        gridd.c[n] = sum;
+    }
+
+        std::string filename = "output/RxnProb.dat";
+        std::ofstream outfile(filename, std::ios::app);
+        outfile << t << " " << std::real(gridd.c[0]) 
+                     << " " << std::imag(gridd.c[0]) 
+                     << " " << std::real(gridd.c[1])
+                     << " " << std::imag(gridd.c[1])
+                     << '\n';
+
+    }
 }
