@@ -87,7 +87,7 @@ void Ham(fft::FFT2D &f2d, GridData &gridd, int pot_name)
    zpot = overlapggs(gridd, n, gridd.vpsi);
 
 
-   std::cout << "Printing Initial Energy on State," << n << '\n'
+   std::cout << "Energy on State," << n << '\n'
 	     << "<K> = " << zkin
              << "<V> = " << zpot
 	     << "<H> = " << zkin+zpot << '\n'; 

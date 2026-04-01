@@ -48,13 +48,15 @@ int main()
     //Initialize
     fft::FFT2D(ni,nj); //Initialize FFT
     
-    wave::init_mass(wave::h0,wave::h1,wave::h2);
+    //wave::init_mass(wave::h0,wave::h1,wave::h2); //For tri atomic system like NaHF
+    wave::init_mass_electron(); //For electronic dynamics
     grid::init_grid(grid::xmin,grid::ymin,grid::xmax,grid::ymax, gridd, grid::an0);
     grid::init_psi(grid::istate, gridd);
     grid::init_psiref(grid::istate, gridd);
     grid::iwa = 0;
     grid::print_psi(grid::iwa, gridd);
     grid::print_init_psi(gridd); //Print the reference functions for correlations
+    std::cout << "Initial energy...\n";
     grid::Ham(f2d, gridd, grid::pot_name); //Initialize potential and Initial E
     grid::pot_diag(gridd);
     grid::write_potential(gridd);
@@ -80,6 +82,24 @@ int main()
             grid::iwa += 1;
             grid::print_psi(grid::iwa, gridd);
         }        
-    }    
+    }   
+    
+    //Recompute final energy
+    std::cout << "Final energy...\n";
+    grid::Ham(f2d, gridd, grid::pot_name);
+
+    //Check Norm
+    double norm = 0.0;
+    for (int i = 0; i < ni; ++i)
+    {
+        for (int j = 0; j < nj; ++j)
+        {
+            for (int n = 0; n < ns; ++n)
+            {
+                norm += std::norm(gridd.psi[i][j][n]);
+            }
+        }
+    }
+    std::cout << "Final Norm = " << norm << '\n';
     return 0;
 }

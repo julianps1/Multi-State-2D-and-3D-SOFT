@@ -6,4 +6,5 @@ namespace wave {
     extern int tmax,tsub,nwpackets;
 
     void init_mass(double h0, double h1, double h2);
+    void init_mass_electron();
 }

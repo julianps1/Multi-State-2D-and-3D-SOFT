@@ -6,6 +6,36 @@
 #include <cmath>
 
 namespace grid {
+	void pot_doublewell(GridData &gridd)
+	{
+		constexpr double eta =  1/1.3544;
+		constexpr double b =  1;
+		constexpr double c =  1;
+		constexpr double d = 0.0; //Linear Coupling
+
+		for (int i = 0; i < ni; ++i)
+		{
+		for (int j = 0; j < nj; ++j)
+			{
+			
+			gridd.v[i][j][0][0] = 0.0625 * eta * (gridd.xg[i]*gridd.xg[i]) * (gridd.xg[i]*gridd.xg[i]) - 0.5 * b * (gridd.xg[i]*gridd.xg[i]) + 0.5 * c * gridd.yg[j]*gridd.yg[j] + 0.5 * d * gridd.xg[i]*gridd.yg[j]; //Ground PES Linear Coupling
+		//	gridd.v[i][j][1][1] = 0.0625 * eta * (gridd.xg[i]*gridd.xg[i]) * (gridd.xg[i]*gridd.xg[i]) - 0.5 * b * (gridd.xg[i]*gridd.xg[i]) + 0.5 * c * gridd.yg[j]*gridd.yg[j] + 0.5 * d * gridd.xg[i]*gridd.yg[j]; //Excited PES Linear Coupling
+		//	gridd.v[i][j][1][0] = 0; //Coupling
+		//	gridd.v[i][j][0][1] = gridd.v[i][j][1][0]; //Symmetric Coupling
+
+			
+			for (int n1 = 0; n1 < ns; ++n1)
+			{ cplx z(0.0, 0.0);
+			for (int n2 = 0; n2 < ns; ++n2)
+			{
+			 z = z+gridd.v[i][j][n1][n2]*gridd.psi[i][j][n2];
+			}
+			 gridd.vpsi[i][j][n1] = z;
+			}
+			
+			}
+		}
+	   }
 
 	void pot_Ferretti(GridData &gridd)
 	{
@@ -24,21 +54,31 @@ namespace grid {
 		{
 		for (int j = 0; j < nj; ++j)
 			{
-			double r = std::sqrt(gridd.xg[i]*gridd.xg[i]+gridd.yg[j]*gridd.yg[j]);
 			
 			gridd.v[i][j][0][0] = 0.5 * Kx * (gridd.xg[i]-X1)*(gridd.xg[i]-X1) + 0.5 * Ky * gridd.yg[j]*gridd.yg[j]; //Ground PES
 			gridd.v[i][j][1][1] = 0.5 * Kx * (gridd.xg[i]-X2)*(gridd.xg[i]-X2) + 0.5 * Ky * gridd.yg[j]*gridd.yg[j] + Delta; //Excited PES
 			gridd.v[i][j][1][0] = gamma * gridd.yg[j] * exp(-alpha * (gridd.xg[i]-X3)*(gridd.xg[i]-X3)  - beta * gridd.yg[j]*gridd.yg[j]); //Coupling
 			gridd.v[i][j][0][1] = gridd.v[i][j][1][0]; //Symmetric Coupling
 
+
+			for (int n1 = 0; n1 < ns; ++n1)
+			{ cplx z(0.0, 0.0);
+			for (int n2 = 0; n2 < ns; ++n2)
+			{
+			 z = z+gridd.v[i][j][n1][n2]*gridd.psi[i][j][n2];
 			}
+			 gridd.vpsi[i][j][n1] = z;
+			}
+
+			}
+
 		}
 	   }
 
 	void pot_psi(GridData &gridd)
           {
-		constexpr double va = 0.17;
-		constexpr double re = 1.4; 
+		//constexpr double va = 0.17;
+		constexpr double re = 1.4;
 
 		for (int i = 0; i < ni; ++i)
 		{
@@ -79,6 +119,12 @@ namespace grid {
 			break;
 		case 1:
 			pot_Ferretti(gridd);
+			break;
+		case 2:
+			pot_doublewell(gridd);
+			break;
+		default:
+			std::cerr << "Invalid potential name: " << pot_name << "\n";
 			break;
 		}
     	}

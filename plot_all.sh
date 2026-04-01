@@ -23,4 +23,4 @@ if [[ ${#frames[@]} -eq 0 || ! -e "${frames[0]}" ]]; then
 fi
 
 echo "Creating GIF for state${state}"
-magick -delay 10 -loop 0 "${frames[@]}" "output/wf_state${state}.gif"
+magick -delay 30 -loop 0 "${frames[@]}" "output/wf_state${state}.gif"

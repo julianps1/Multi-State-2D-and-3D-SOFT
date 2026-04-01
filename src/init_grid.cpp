@@ -119,8 +119,10 @@ namespace grid {
 		for (int j = 0; j < nj; ++j)
     		{
     			double v11 = gridd.v[i][j][0][0];
-			double v22 = gridd.v[i][j][1][1];
-			double v12 = gridd.v[i][j][0][1];
+				double v22 = 0;
+				double v12 = 0;
+		//	double v22 = gridd.v[i][j][1][1];
+		//	double v12 = gridd.v[i][j][0][1];
 			
 			//diagonalize
 			
@@ -139,11 +141,13 @@ namespace grid {
 			gridd.vsin[i][j] = std::sin(theta);
 
 			double sqrtv12 = std::sqrt(dv * dv + 4.0 * v12 * v12);
-			gridd.vd[i][j][0] = 0.5 * (v11 + v22 - sqrtv12);
-			gridd.vd[i][j][1] = 0.5 * (v11 + v22 + sqrtv12);
+//			gridd.vd[i][j][0] = 0.5 * (v11 + v22 - sqrtv12);
+			gridd.vd[i][j][0] = v11;
+//			gridd.vd[i][j][1] = 0.5 * (v11 + v22 + sqrtv12);
 		}
 		// blank line for gnuplot grid formatting
 	        outfile << "\n";
+		
 		}
 
 
@@ -160,17 +164,18 @@ namespace grid {
 			if (t1 > 0) 
 			 {
 			  gridd.vd[i][j][0] = gridd.vd[i][j][0] - im * dim * t1 * t1;
-			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t1 * t1;
+//			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t1 * t1;
 			 }
 			double t2 = std::abs(gridd.yg[j]) - rim;
 			if (t2 > 0) 
 			 {
 			  gridd.vd[i][j][0] = gridd.vd[i][j][0] - im * dim * t2 * t2;
-			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t2 * t2;
+//			  gridd.vd[i][j][1] = gridd.vd[i][j][1] - im * dim * t2 * t2;
 			 }
 			
 	    	}
 		}
 		
+	   std::cout << "POT_DIAG RUNNING WITHOUT MULTISTATES \n";
 	   }
 }

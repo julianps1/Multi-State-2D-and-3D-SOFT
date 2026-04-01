@@ -12,6 +12,7 @@ namespace wave {
 namespace wave {
     
     void init_mass(double h0, double h1, double h2)
+    //For atomic system like NaHF 
     {
         double ame = 1836.15;
 
@@ -25,5 +26,14 @@ namespace wave {
 
         std::cout << "REDUCED MASS OF H2 " << amx << std::endl;
         std::cout << "MASS OF THE COM " << amc << std::endl;
+    }
+
+    void init_mass_electron()
+    {
+    
+        amx = 1;
+        amy = amx;
+        
+        std::cout << "USING ELECTRONIC MASS " << amx << std::endl;
     }
 }

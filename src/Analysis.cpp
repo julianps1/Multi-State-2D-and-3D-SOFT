@@ -37,8 +37,8 @@ void write_potential(GridData &gridd)
 		        << gridd.v[i][j][0][1] << " "
 		        << std::real(gridd.vd[i][j][0]) << " "
 		        << std::imag(gridd.vd[i][j][0]) << " "
-		        << std::real(gridd.vd[i][j][1]) << " "
-		        << std::imag(gridd.vd[i][j][1]) << " "
+		      //  << std::real(gridd.vd[i][j][1]) << " "
+		      //  << std::imag(gridd.vd[i][j][1]) << " "
 		        << gridd.vcos[i][j] << " "
 		        << gridd.vsin[i][j] << "\n";
         }
@@ -99,7 +99,7 @@ void write_potential(GridData &gridd)
 				 outfile << gridd.xg[i] << " "
         			   << gridd.yg[j] << " "
 			           << std::norm(gridd.psi[i][j][0]) << " "
-			           << std::norm(gridd.psi[i][j][1])
+			          // << std::norm(gridd.psi[i][j][1])
 			           << "\n";
 			 //} 
     		     }
@@ -128,8 +128,8 @@ void write_potential(GridData &gridd)
         std::ofstream outfile(filename, std::ios::app);
         outfile << t << " " << std::real(gridd.c[0]) 
                      << " " << std::imag(gridd.c[0]) 
-                     << " " << std::real(gridd.c[1])
-                     << " " << std::imag(gridd.c[1])
+                   //  << " " << std::real(gridd.c[1])
+                   //  << " " << std::imag(gridd.c[1])
                      << '\n';
 
     }
@@ -154,8 +154,8 @@ void write_potential(GridData &gridd)
         std::ofstream outfile(filename, std::ios::app);
         outfile << t << " " << std::real(gridd.c[0]) 
                      << " " << std::imag(gridd.c[0]) 
-                     << " " << std::real(gridd.c[1])
-                     << " " << std::imag(gridd.c[1])
+                   //  << " " << std::real(gridd.c[1])
+                   //  << " " << std::imag(gridd.c[1])
                      << '\n';
 
     }
@@ -197,8 +197,8 @@ void write_potential(GridData &gridd)
         std::ofstream outfile(filename, std::ios::app);
         outfile << t << " " << std::real(gridd.c[0]) 
                      << " " << std::imag(gridd.c[0]) 
-                     << " " << std::real(gridd.c[1])
-                     << " " << std::imag(gridd.c[1])
+                    // << " " << std::real(gridd.c[1])
+                    // << " " << std::imag(gridd.c[1])
                      << '\n';
 
     }

@@ -43,6 +43,7 @@ namespace grid {
      void print_init_psi(GridData &gridd);
      void pot_psi(GridData &gridd);
      void pot_Ferretti(GridData &gridd);
+     void pot_doublewell(GridData &gridd);
      void pick_pot(int pot_name, GridData &gridd);
      void pot_diag(GridData &gridd);
      void write_potential(GridData &gridd);
