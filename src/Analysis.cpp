@@ -81,7 +81,7 @@ void write_potential(GridData &gridd)
 // print wf denisty to file
 	void print_psi(int iwa, GridData &gridd)
           {
-	   std::string filename = "output/wf_" + std::to_string(iwa) + ".dat";
+	   std::string filename = "output/snapshots/wf_" + std::to_string(iwa) + ".dat";
 	   std::ofstream outfile(filename);
 
 		for (int i = 0; i < ni; ++i)

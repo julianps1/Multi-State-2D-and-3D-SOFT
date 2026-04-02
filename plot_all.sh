@@ -9,13 +9,13 @@ if [[ "$state" != "0" && "$state" != "1" ]]; then
     exit 1
 fi
 
-for file in output/wf_*.dat
+for file in output/snapshots/wf_*.dat
 do
     echo "Plotting $file"
     gnuplot -c plot_density.gscript "$file"
 done
 
-mapfile -t frames < <(printf '%s\n' output/wf_*_state"${state}".png | sort -V)
+mapfile -t frames < <(printf '%s\n' output/snapshots/wf_*_state"${state}".png | sort -V)
 
 if [[ ${#frames[@]} -eq 0 || ! -e "${frames[0]}" ]]; then
     echo "No PNG frames found for state${state}"
@@ -28,4 +28,5 @@ magick -delay 30 -loop 0 "${frames[@]}" "output/wf_state${state}.gif"
 echo "Plotting correlations and reaction probabilities"
 gnuplot plot_corr.gscript
 gnuplot plot_rxnprob.gscript
-gnuplot plot_crosscorr.gscript
+gnuplot -c plot_ref.gscript "output/psiref.dat"
+echo "Done :)"

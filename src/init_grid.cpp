@@ -50,7 +50,8 @@ namespace grid {
 				int idx = ni - 1 - i;
 				for (int j = 0; j < nj; ++j)
 				{
-					gridd.psiref[i][j][istate] = gridd.psi0[idx][j][istate];
+					int indxj = nj - 1 - j;
+					gridd.psiref[i][j][istate] = gridd.psi0[idx][indxj][istate];
 				}
 			}
 		}

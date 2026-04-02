@@ -24,6 +24,7 @@ int main()
     wave::dtsub = wave::dt/wave::tsub;
     std::filesystem::remove_all("output");
     std::filesystem::create_directory("output");
+    std::filesystem::create_directory("output/snapshots");
     wave::dt2 = wave::dtsub * 0.5;
     
     std::cout << "wave parameters:\n"

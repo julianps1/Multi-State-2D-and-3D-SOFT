@@ -28,13 +28,27 @@ set style line 2 lc rgb "blue" lw 3 dashtype solid # Imaginary
 ##########################
 # Plot
 ##########################
+set yrange[-2:2]
 plot \
     "output/correl.dat" using 1:2 with lines ls 1 t "Real", \
     "output/correl.dat" u 1:3 with lines ls 2 t "Imag"
+set title "Cross-Correlation"
+set output "output/CrossCorr.png"
+plot \
+    "output/crosscorrel.dat" using 1:2 with lines ls 1 t "Real", \
+    "output/crosscorrel.dat" u 1:3 with lines ls 2 t "Imag"
 
+set title "Auto-Correlation"
+set yrange[0:2]
+set ylabel "|C(t)|"
 set output "output/AbsAutoCorr.png"
 plot \
     "output/correl.dat" u 1:4 with lines ls 1 notitle
+
+set title "Cross-Correlation"
+set output "output/AbsCrossCorr.png"
+plot \
+    "output/crosscorrel.dat" u 1:4 with lines ls 1 notitle
 
 ##########################
 # Finish output
