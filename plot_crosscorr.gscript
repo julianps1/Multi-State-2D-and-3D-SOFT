@@ -32,6 +32,10 @@ plot \
     "output/crosscorrel.dat" using 1:2 with lines ls 1 t "Real", \
     "output/crosscorrel.dat" u 1:3 with lines ls 2 t "Imag"
 
+set output "output/AbsCrossCorr.png"
+plot \
+    "output/crosscorrel.dat" u 1:4 with lines ls 1 notitle
+
 ##########################
 # Finish output
 ##########################

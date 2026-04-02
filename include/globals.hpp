@@ -2,7 +2,7 @@
 #include <complex>
 #include <cmath> 
 
-constexpr int ni = 512, nj = 512, ns = 1 ; //for now fixed grid and states
+constexpr int ni = 64, nj = 64, ns = 1 ; //for now fixed grid and states
 constexpr char defaultInputFile[] = "INq";
 
 using cplx = std::complex<double>;

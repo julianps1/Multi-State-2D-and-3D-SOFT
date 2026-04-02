@@ -49,6 +49,7 @@ namespace grid {
      void write_potential(GridData &gridd);
      void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd, double ts);
      void apply_potential_phase(GridData &gridd, double ts);
+     void apply_1_state_potential_phase(GridData &gridd, double ts);
      void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d);
      void potential_step(GridData &gridd, int n);
      void corr(GridData &gridd, double t);

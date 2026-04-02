@@ -128,6 +128,7 @@ void write_potential(GridData &gridd)
         std::ofstream outfile(filename, std::ios::app);
         outfile << t << " " << std::real(gridd.c[0]) 
                      << " " << std::imag(gridd.c[0]) 
+                     << " " << std::norm(gridd.c[0]) 
                    //  << " " << std::real(gridd.c[1])
                    //  << " " << std::imag(gridd.c[1])
                      << '\n';
@@ -153,7 +154,8 @@ void write_potential(GridData &gridd)
         std::string filename = "output/crosscorrel.dat";
         std::ofstream outfile(filename, std::ios::app);
         outfile << t << " " << std::real(gridd.c[0]) 
-                     << " " << std::imag(gridd.c[0]) 
+                     << " " << std::imag(gridd.c[0])
+                     << " " << std::norm(gridd.c[0]) 
                    //  << " " << std::real(gridd.c[1])
                    //  << " " << std::imag(gridd.c[1])
                      << '\n';
@@ -196,9 +198,6 @@ void write_potential(GridData &gridd)
         std::string filename = "output/RxnProb.dat";
         std::ofstream outfile(filename, std::ios::app);
         outfile << t << " " << std::real(gridd.c[0]) 
-                     << " " << std::imag(gridd.c[0]) 
-                    // << " " << std::real(gridd.c[1])
-                    // << " " << std::imag(gridd.c[1])
                      << '\n';
 
     }

@@ -32,6 +32,10 @@ plot \
     "output/correl.dat" using 1:2 with lines ls 1 t "Real", \
     "output/correl.dat" u 1:3 with lines ls 2 t "Imag"
 
+set output "output/AbsAutoCorr.png"
+plot \
+    "output/correl.dat" u 1:4 with lines ls 1 notitle
+
 ##########################
 # Finish output
 ##########################

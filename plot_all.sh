@@ -24,3 +24,8 @@ fi
 
 echo "Creating GIF for state${state}"
 magick -delay 30 -loop 0 "${frames[@]}" "output/wf_state${state}.gif"
+
+echo "Plotting correlations and reaction probabilities"
+gnuplot plot_corr.gscript
+gnuplot plot_rxnprob.gscript
+gnuplot plot_crosscorr.gscript

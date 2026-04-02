@@ -66,7 +66,7 @@ int main()
     grid::print_init_psi(gridd); //Print the reference functions for correlations
     std::cout << "Initial energy...\n";
     grid::Ham(f2d, gridd, grid::pot_name); //Initialize potential and Initial E
-    grid::pot_diag(gridd);
+    //grid::pot_diag(gridd);
     grid::write_potential(gridd);
 
     //DOUBE WELL INITIALIZE WEIGHTS FOR RXN PROB

@@ -1,5 +1,5 @@
 # input file passed from command line
-file = ARG1
+file = "output/v_0.dat" 
 base = substr(file,1,strlen(file)-4)
 
 set terminal pngcairo size 800,600
