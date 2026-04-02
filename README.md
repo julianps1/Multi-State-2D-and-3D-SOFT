@@ -5,17 +5,14 @@ A small C++ code for propagating a two-state wavepacket on a 2D grid using FFT-b
 The project currently:
 
 - reads simulation parameters from `INq`
-- builds a fixed-size `256 x 256` spatial grid
 - initializes a Gaussian wavepacket on one electronic state
 - applies kinetic propagation with FFTW
 - applies the potential step in a locally diagonalized adiabatic basis
 - writes wavefunction densities, potential data, and correlation data to `output/`
-
+- works for a double well coupled to a harmonic oscillator 
 ## Current status
 
 The codebase is actively in progress. 
-
-So this README reflects the intended structure of the code as it exists now, plus the outputs and workflow already implemented.
 
 ## Requirements
 
@@ -46,13 +43,14 @@ make clean
 
 The intended workflow is:
 
-1. Edit `INq` to set the grid, wavepacket, and propagation parameters.
-2. Build with `make`.
+0. Currently: set grid and number of states in globals.hpp
+1. Edit `INq` to set the grid(later), wavepacket, and propagation parameters.
+2. Build with `make`. (Only if constants in model potentials or grid were changed. In case of grid use make clean)
 3. Run `./sim`.
 4. Inspect data files in `output/`.
-5. Optionally generate plots with the supplied gnuplot scripts.
+5. Plot :)
 
-At startup, the code creates the `output/` directory if needed and deletes `output/correl.dat` so each run starts with a fresh correlation file.
+At startup, the code clears and creates the `output/` directories
 
 ## Input file
 
@@ -71,9 +69,8 @@ The following parameters are currently recognized:
 - `nwpackets`: interval for writing wavefunction snapshots
 - `h0`, `h1`, `h2`: mass-related parameters used to construct reduced masses
 - `istate`: initial populated electronic state
-- `pot_name`: potential selector parsed by the input reader, but not yet fully wired because `pick_pot(...)` is still missing
 
-Current sample `INq`:
+Sample `INq`:
 
 ```text
 dt 0.4
@@ -94,19 +91,20 @@ h0 29
 h1 1.0
 h2 1.0
 istate 0
+pot_name 2
 ```
 
 ## Output files
 
-The code writes data files into `output/`.
+The code writes data files into `output/`, this is cleared before each run so SAVE YOUR DATA EXTERNALLY
 
 ### Wavefunction snapshots
 
 Files:
 
-- `output/wf_0.dat`
-- `output/wf_1.dat`
-- `output/wf_2.dat`
+- `output/snapshots/wf_0.dat`
+- `output/snapshots/wf_1.dat`
+- `output/snapshots/wf_2.dat`
 - ...
 
 Each row contains:
@@ -118,21 +116,23 @@ Each row contains:
 
 Blank lines are inserted between x-slices for convenient `gnuplot pm3d` plotting.
 
-### Correlation function
+The total number is controlled by nwpackets, which sets the number of time-steps between each snapshot
+
+### Correlation function (Auto and Cross)
 
 File:
 
-- `output/correl.dat`
+- `output/correl.dat` or `output\crosscorrel.dat`
 
 Each row contains:
 
 - column 1: time `t`
 - column 2: real part of the overlap on state 0
 - column 3: imaginary part of the overlap on state 0
-- column 4: real part of the overlap on state 1
-- column 5: imaginary part of the overlap on state 1
+- column 4: absolute value
 
-This file is appended during propagation and reset at the beginning of each run.
+The difference is the reference function. Autocorrelation is always psi(0) but cross correlation is determined by psiref in `init_psiref`
+This is MODEL SPECIFIC
 
 ### Potential data
 
@@ -156,6 +156,8 @@ Current columns:
 
 ### Mixing angle
 
+This is for debugging
+
 File:
 
 - `output/theta.dat`
@@ -170,23 +172,23 @@ Each row contains:
 
 From the current implementation:
 
-- the grid size is fixed at `ni = 256`, `nj = 256`
-- the number of electronic states is fixed at `ns = 2`
+- the grid size is fixed and set in `globals.hpp` along with the number of states
+- the number of electronic states is limited to 2 maximum
 - FFTW is used for 2D forward and backward transforms
-- kinetic evolution is applied in momentum space
-- the potential step is applied after diagonalizing the local `2 x 2` potential matrix
+- kinetic evolution is applied in momentum space (and diabatic representation)
+- the potential step is applied in the adiabatic representation (diagonalization and transformation automaticcaly accoutned for)
+- Input potentials for the DIABATIC representation (no derivative coupling)
 - propagation uses a symmetric split-operator pattern: half kinetic, full potential, half kinetic
 
 The initial wavepacket is a Gaussian placed at `(q0, y0)` with widths controlled by `alfa` and `beta`, momentum shifts `px0` and `py0`, and initial occupation on state `istate`.
 
 ## Potential models
 
-The source currently contains two potential-building functions:
+- 0 `pot_psi(GridData&)`
+- 1 `pot_Ferretti(GridData&)`
+- 2 `pot_doublewell(GridData&)` 
 
-- `pot_psi(GridData&)`
-- `pot_Ferretti(GridData&)`
-
-However, the selector function `pick_pot(...)` is not yet implemented in the current tree, so potential selection is not complete yet.
+The values here correspond to the `pot_name` in the input. NOTE `pot_doublewell` is a 1-state model. Currently switching between 1 and two states is not automatic. 
 
 ## Plotting
 
@@ -195,14 +197,11 @@ The repository includes simple gnuplot helpers:
 - `plot_density.gscript`: plots state densities from `wf_*.dat`
 - `plot_corr.gscript`: plots the correlation function
 - `plot_pot.gscript`: plots potential-related columns from `v_*.dat`
-- `plot_all.sh`: loops over `output/wf_*.dat` and generates density plots
+- `plot_all.sh`: loops over `output/wf_*.dat` and generates density plots and .gif
 
 Example intended usage:
 
 ```bash
-gnuplot -c plot_corr.gscript
-gnuplot -c plot_density.gscript output/wf_0.dat
-gnuplot -c plot_pot.gscript output/v_0.dat
 ./plot_all.sh
 ```
 
@@ -223,9 +222,8 @@ gnuplot -c plot_pot.gscript output/v_0.dat
 
 Natural next steps for the codebase are:
 
-- define `grid::pot_name`
-- implement `pick_pot(...)`
-- document the meaning of each available `pot_name` value
+- Automatic switching between 1 and 2 states
+- More potentials
+- More dimensions
 - add a small example run that is known to compile and execute
 - reduce reliance on global state as the code grows
-
