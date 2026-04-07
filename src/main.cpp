@@ -55,20 +55,27 @@ int main()
               << "  pot_name = " << grid::pot_name << '\n';
     std::cout << "Pi = " << pi << '\n';
     //Initialize
-    fft::FFT2D(ni,nj); //Initialize FFT
+     fft::FFT2D(ni,nj); //Initialize FFT
     
-    //wave::init_mass(wave::h0,wave::h1,wave::h2); //For tri atomic system like NaHF
-    wave::init_mass_electron(); //For electronic dynamics
-    grid::init_grid(grid::xmin,grid::ymin,grid::xmax,grid::ymax, gridd, grid::an0);
-    grid::init_psi(grid::istate, gridd);
-    grid::init_psiref(grid::istate, gridd);
-    grid::iwa = 0;
-    grid::print_psi(grid::iwa, gridd);
-    grid::print_init_psi(gridd); //Print the reference functions for correlations
-    std::cout << "Initial energy...\n";
-    grid::Ham(f2d, gridd, grid::pot_name); //Initialize potential and Initial E
-    //grid::pot_diag(gridd);
-    grid::write_potential(gridd);
+    //Initialization of masses: Pick one
+     wave::init_mass(wave::h0,wave::h1,wave::h2); //For tri atomic system like NaHF
+     //wave::init_mass_electron(); //For electronic dynamics
+   
+    //Initialize grid and wavefunction
+     grid::init_grid(grid::xmin,grid::ymin,grid::xmax,grid::ymax, gridd, grid::an0);
+     grid::init_psi(grid::istate, gridd);
+     grid::init_psiref(grid::istate, gridd);
+     grid::iwa = 0;
+     grid::print_psi(grid::iwa, gridd);
+     grid::print_init_psi(gridd); //Print the reference functions for correlations
+     std::cout << "Initial energy...\n";
+     grid::Ham(f2d, gridd, grid::pot_name); //Initialize potential and Initial E
+     if (ns == 2)
+        {
+        std::cout << "2-state system: Diagonalizing Potential... \n";  
+        grid::pot_diag(gridd);
+        }
+     grid::write_potential(gridd);
 
     //DOUBE WELL INITIALIZE WEIGHTS FOR RXN PROB
     grid::RxnWeight(gridd);
@@ -97,9 +104,10 @@ int main()
             grid::split(wave::dtsub, wave::dt2, gridd, f2d);
             t += wave::dtsub;
         }
-        grid::corr(gridd, t);
-        grid::crosscorr(gridd, t);
-        grid::RxnProb(gridd, t);
+
+        grid::corr(gridd, t); //Autocorrelation
+        grid::crosscorr(gridd, t); //Cross correlation with psi_ref
+        grid::RxnProb(gridd, t); //Reaction probability for double well system
 
         if (it % wave::nwpackets == 0)
         {
@@ -109,6 +117,7 @@ int main()
     }   
     
     //Recompute final energy
+    std::cout << "\n";
     std::cout << "Final energy...\n";
     grid::Ham(f2d, gridd, grid::pot_name);
 
@@ -135,5 +144,6 @@ int main()
     std::cout << std::fixed << std::setprecision(3);
     std::cout << "Wall time: " << wall_secs << " s\n";
     std::cout << "CPU time:  " << cpu_secs << " s\n";
+    std::cout << "Calculation completed successfully :) \n";
     return 0;
 }

@@ -15,17 +15,31 @@ namespace grid {
 
 void write_potential(GridData &gridd)
 {
-    std::filesystem::create_directory("output");
-
+    
     std::string filename = "output/v_" + std::to_string(iwa) + ".dat";
     std::ofstream outfile(filename);
-
-    if (!outfile)
+    
+    if (ns == 1) 
     {
-        std::cerr << "Error opening " << filename << "\n";
-        return;
-    }
+        outfile << "#x,y,v00,Re(vd0),Im(vd0)\n"; //File header
 
+    for (int i = 0; i < ni; ++i)
+    {
+        for (int j = 0; j < nj; ++j)
+        {
+		outfile << gridd.xg[i] << " "
+        		<< gridd.yg[j] << " "
+		        << gridd.v[i][j][0][0] << "\n";
+        }
+
+        // blank line for gnuplot grid formatting
+        outfile << "\n";
+    } 
+    } 
+    else 
+    {
+    outfile << "#x,y,v00,v11,v01,Re(vd0),Im(vd0),Re(vd1),Im(vd1),vcos,vsin\n"; //File header
+    
     for (int i = 0; i < ni; ++i)
     {
         for (int j = 0; j < nj; ++j)
@@ -37,8 +51,8 @@ void write_potential(GridData &gridd)
 		        << gridd.v[i][j][0][1] << " "
 		        << std::real(gridd.vd[i][j][0]) << " "
 		        << std::imag(gridd.vd[i][j][0]) << " "
-		      //  << std::real(gridd.vd[i][j][1]) << " "
-		      //  << std::imag(gridd.vd[i][j][1]) << " "
+		        << std::real(gridd.vd[i][j][1]) << " "
+		        << std::imag(gridd.vd[i][j][1]) << " "
 		        << gridd.vcos[i][j] << " "
 		        << gridd.vsin[i][j] << "\n";
         }
@@ -46,13 +60,15 @@ void write_potential(GridData &gridd)
         // blank line for gnuplot grid formatting
         outfile << "\n";
     }
+    }
 }
 
 //Print reference Psi's
 	void print_init_psi(GridData &gridd)
           {
 	   std::string filename = "output/psiref.dat";
-	   std::ofstream outfile(filename);
+	   std::ofstream outfile(filename, std::ios::app);
+        outfile << "#x,y,|psi_0|^2,|psi_ref|^2\n"; //File header
 
 		for (int i = 0; i < ni; ++i)
 		{
@@ -60,18 +76,11 @@ void write_potential(GridData &gridd)
 		    for (int j = 0; j < nj; ++j)
     		    {
 
-			//for (int n = 0; n < ns; ++n)
-		        //{
-			// rho = rho + std::norm(gridd.psi[i][j][n]);
-			//}
-			//if (rho > 1e-6)
-			// {
 				 outfile << gridd.xg[i] << " "
         			   << gridd.yg[j] << " "
-			           << std::norm(gridd.psi0[i][j][0]) << " "
-			           << std::norm(gridd.psiref[i][j][0])
+			           << std::norm(gridd.psi0[i][j][istate]) << " "
+			           << std::norm(gridd.psiref[i][j][istate])
 			           << "\n";
-			 //} 
     		     }
                     // blank line after each i row
                        outfile << "\n";
@@ -80,36 +89,34 @@ void write_potential(GridData &gridd)
 
 // print wf denisty to file
 	void print_psi(int iwa, GridData &gridd)
-          {
+        {
 	   std::string filename = "output/snapshots/wf_" + std::to_string(iwa) + ".dat";
-	   std::ofstream outfile(filename);
-
+	   std::ofstream outfile(filename, std::ios::app);
+        outfile << "#x,y,|psi0|^2,|psi1|^2\n"; //File header
 		for (int i = 0; i < ni; ++i)
-		{
+ 		 {
 
 		    for (int j = 0; j < nj; ++j)
     		    {
-
-			//for (int n = 0; n < ns; ++n)
-		        //{
-			// rho = rho + std::norm(gridd.psi[i][j][n]);
-			//}
-			//if (rho > 1e-6)
-			// {
 				 outfile << gridd.xg[i] << " "
-        			   << gridd.yg[j] << " "
-			           << std::norm(gridd.psi[i][j][0]) << " "
-			          // << std::norm(gridd.psi[i][j][1])
-			           << "\n";
-			 //} 
-    		     }
+           			     << gridd.yg[j] << " ";
+                for (int n = 0; n < ns; ++n)      
+                 {              
+				 outfile << std::norm(gridd.psi[i][j][n]) << " ";
+			     }
+                 outfile << "\n"; //blank line after all states appended
+                }
                     // blank line after each i row
                        outfile << "\n";
-                  }
+         }
 	    }
 
     void corr(GridData &gridd, double t)
     {
+
+    std::string filename = "output/correl.dat";
+    std::ofstream outfile(filename, std::ios::app);
+    outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
 
     for (int n = 0; n < ns; ++n)
     {
@@ -122,22 +129,24 @@ void write_potential(GridData &gridd)
             }
         }
         gridd.c[n] = sum;
+
+        outfile << t << " " << std::real(gridd.c[n]) 
+                     << " " << std::imag(gridd.c[n]) 
+                     << " " << std::norm(gridd.c[n]); 
+
     }
 
-        std::string filename = "output/correl.dat";
-        std::ofstream outfile(filename, std::ios::app);
-        outfile << t << " " << std::real(gridd.c[0]) 
-                     << " " << std::imag(gridd.c[0]) 
-                     << " " << std::norm(gridd.c[0]) 
-                   //  << " " << std::real(gridd.c[1])
-                   //  << " " << std::imag(gridd.c[1])
-                     << '\n';
+    outfile << '\n'; //Blank line after all states appended
 
     }
 
     void crosscorr(GridData &gridd, double t)
     {
 
+    std::string filename = "output/crosscorrel.dat";
+    std::ofstream outfile(filename, std::ios::app);
+    outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
+    
     for (int n = 0; n < ns; ++n)
     {
         cplx sum = 0.0;
@@ -149,19 +158,12 @@ void write_potential(GridData &gridd)
             }
         }
         gridd.c[n] = sum;
+
+        outfile << t << " " << std::real(gridd.c[n]) 
+                     << " " << std::imag(gridd.c[n]) 
+                     << " " << std::norm(gridd.c[n]); 
     }
-
-        std::string filename = "output/crosscorrel.dat";
-        std::ofstream outfile(filename, std::ios::app);
-        outfile << t << " " << std::real(gridd.c[0]) 
-                     << " " << std::imag(gridd.c[0])
-                     << " " << std::norm(gridd.c[0]) 
-                   //  << " " << std::real(gridd.c[1])
-                   //  << " " << std::imag(gridd.c[1])
-                     << '\n';
-
     }
-
     void RxnWeight(GridData &gridd)
     //Define the reaction region with a weight function (for double well system)
     {

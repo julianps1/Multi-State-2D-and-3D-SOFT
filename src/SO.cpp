@@ -79,9 +79,14 @@ void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d) //Propagate 
         }
     }
 
-    apply_1_state_potential_phase(gridd, ts); //Only using first state as this is a single state model
-    //apply_potential_phase(gridd, ts); //Using both states for potential phase
-
+    if (ns == 1)
+    {
+        apply_1_state_potential_phase(gridd, ts); //Only using first state as this is a single state model
+    }
+    else
+    {
+        apply_potential_phase(gridd, ts); //Using both states for potential phase
+    }
 
     for (int n = 0; n < ns; ++n)
     {
