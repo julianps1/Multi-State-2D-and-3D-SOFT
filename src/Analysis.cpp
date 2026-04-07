@@ -21,7 +21,6 @@ void compute_populations(GridData &gridd, double t)
 
     outfile << t << " ";
     for (int n = 0; n < ns; ++n)
-
     {
         double pop = 0.0;
         for (int i = 0; i < ni; ++i)
