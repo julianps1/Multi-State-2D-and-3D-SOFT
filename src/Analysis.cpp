@@ -13,6 +13,30 @@
 
 namespace grid {
 
+void compute_populations(GridData &gridd, double t)
+{
+    std::string filename = "output/populations.dat";
+    std::ofstream outfile(filename, std::ios::app);
+    outfile << "#t,pop0,pop1\n"; //File header
+
+    outfile << t << " ";
+    for (int n = 0; n < ns; ++n)
+
+    {
+        double pop = 0.0;
+        for (int i = 0; i < ni; ++i)
+        {
+            for (int j = 0; j < nj; ++j)
+            {
+                pop += std::norm(gridd.psi[i][j][n]);
+            }
+        }
+        outfile << pop << " ";
+    }
+
+    outfile << "\n"; //New line after all states appended
+}
+
 void write_potential(GridData &gridd)
 {
     

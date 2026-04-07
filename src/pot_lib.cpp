@@ -47,7 +47,7 @@ namespace grid {
 		constexpr double X3 = 3.0;
 		constexpr double alpha = 3.0;
 		constexpr double beta = 1.5;
-		constexpr double gamma = 0.005;
+		constexpr double gamma = 0.04;
 		constexpr double Delta = 0.01; 
 
 		for (int i = 0; i < ni; ++i)

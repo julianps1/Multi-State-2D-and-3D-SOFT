@@ -107,7 +107,8 @@ int main()
 
         grid::corr(gridd, t); //Autocorrelation
         grid::crosscorr(gridd, t); //Cross correlation with psi_ref
-        grid::RxnProb(gridd, t); //Reaction probability for double well system
+        grid::compute_populations(gridd, t); //Compute populations in each state
+        //grid::RxnProb(gridd, t); //Reaction probability for double well system
 
         if (it % wave::nwpackets == 0)
         {
