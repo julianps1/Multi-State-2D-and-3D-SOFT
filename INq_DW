@@ -12,8 +12,8 @@ beta 0.5
 y0 0.0
 py0 0.0
 nwpackets 1
-h0 29.0
+h0 1.0
 h1 1.0
-h2 1.0
+h2 0.0
 istate 0
 pot_name 2

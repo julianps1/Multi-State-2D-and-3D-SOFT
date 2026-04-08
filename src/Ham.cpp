@@ -76,9 +76,12 @@ cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns])
 void Ham(fft::FFT2D &f2d, GridData &gridd, int pot_name)
 {
   pick_pot(pot_name, gridd);
+
+  compute_vpsi(gridd);
  
   cplx zkin = {0.0, 0.0};
   cplx zpot = {0.0, 0.0}; 
+  cplx ztot = {0.0, 0.0};
 	
   for (int n = 0; n<ns; ++n) {
    kinetic_step(f2d, gridd, n);
@@ -90,9 +93,11 @@ void Ham(fft::FFT2D &f2d, GridData &gridd, int pot_name)
    std::cout << "Energy on State," << n << '\n'
 	     << "<K> = " << zkin
              << "<V> = " << zpot
-	     << "<H> = " << zkin+zpot << '\n'; 
+	     << "<H> = " << zkin+zpot << '\n';
+    ztot += zkin + zpot;
     }
 
+    std::cout << "Total Energy = " << ztot << '\n';
 }
 
 }

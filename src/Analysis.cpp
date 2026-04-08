@@ -17,7 +17,7 @@ void compute_populations(GridData &gridd, double t)
 {
     std::string filename = "output/populations.dat";
     std::ofstream outfile(filename, std::ios::app);
-    outfile << "#t,pop0,pop1\n"; //File header
+    //outfile << "#t,pop0,pop1\n"; //File header
 
     outfile << t << " ";
     for (int n = 0; n < ns; ++n)
@@ -93,7 +93,9 @@ void write_potential(GridData &gridd)
 	   std::ofstream outfile(filename, std::ios::app);
         outfile << "#x,y,|psi_0|^2,|psi_ref|^2\n"; //File header
 
-		for (int i = 0; i < ni; ++i)
+        double gnorm = std::sqrt(1.0/dx/dy); //Normalization factor for grid density (since dx*dy included in normalization constants for psi, need to divide by it here to get correct density values)
+		
+        for (int i = 0; i < ni; ++i)
 		{
 
 		    for (int j = 0; j < nj; ++j)
@@ -101,8 +103,8 @@ void write_potential(GridData &gridd)
 
 				 outfile << gridd.xg[i] << " "
         			   << gridd.yg[j] << " "
-			           << std::norm(gridd.psi0[i][j][istate]) << " "
-			           << std::norm(gridd.psiref[i][j][istate])
+			           << std::norm(gridd.psi0[i][j][istate]*gnorm) << " "
+			           << std::norm(gridd.psiref[i][j][istate]*gnorm)
 			           << "\n";
     		     }
                     // blank line after each i row
@@ -116,6 +118,9 @@ void write_potential(GridData &gridd)
 	   std::string filename = "output/snapshots/wf_" + std::to_string(iwa) + ".dat";
 	   std::ofstream outfile(filename, std::ios::app);
         outfile << "#x,y,|psi0|^2,|psi1|^2\n"; //File header
+
+        double gnorm = std::sqrt(1.0/dx/dy); //Normalization factor for grid density (since dx*dy included in normalization constants for psi, need to divide by it here to get correct density values)
+		
 		for (int i = 0; i < ni; ++i)
  		 {
 
@@ -125,7 +130,7 @@ void write_potential(GridData &gridd)
            			     << gridd.yg[j] << " ";
                 for (int n = 0; n < ns; ++n)      
                  {              
-				 outfile << std::norm(gridd.psi[i][j][n]) << " ";
+				 outfile << std::norm(gridd.psi[i][j][n]*gnorm) << " ";
 			     }
                  outfile << "\n"; //blank line after all states appended
                 }
@@ -139,7 +144,7 @@ void write_potential(GridData &gridd)
 
     std::string filename = "output/correl.dat";
     std::ofstream outfile(filename, std::ios::app);
-    outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
+    //outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
 
     for (int n = 0; n < ns; ++n)
     {
@@ -168,7 +173,7 @@ void write_potential(GridData &gridd)
 
     std::string filename = "output/crosscorrel.dat";
     std::ofstream outfile(filename, std::ios::app);
-    outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
+    //outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
     
     for (int n = 0; n < ns; ++n)
     {

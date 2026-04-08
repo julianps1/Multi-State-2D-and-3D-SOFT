@@ -10,6 +10,6 @@ echo "Plotting correlations and reaction probabilities"
 gnuplot plot_corr.gscript
 gnuplot plot_rxnprob.gscript
 gnuplot -c plot_ref.gscript "output/psiref.dat"
-gnuplot plot_pop.gscript
+gnuplot plot_pops.gscript
 gnuplot plot_pot.gscript
 echo "Done :)"

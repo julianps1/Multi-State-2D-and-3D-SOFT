@@ -57,8 +57,9 @@ namespace grid {
 		}
 
 	void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0)
-          {
-                double alfa = wave::alfa;
+        {
+        
+		double alfa = wave::alfa;
 		double beta = wave::beta;
 		double amx = wave::amx;
 		double amy = wave::amy;
@@ -153,4 +154,22 @@ namespace grid {
 	    	}
 		}
 	   }
+
+	void compute_vpsi(GridData &gridd)
+	{
+		for (int i = 0; i < ni; ++i)
+		{
+		for (int j = 0; j < nj; ++j)
+			{
+			for (int n1 = 0; n1 < ns; ++n1)
+			{ cplx z(0.0, 0.0);
+			for (int n2 = 0; n2 < ns; ++n2)
+			 {
+			 z = z+gridd.v[i][j][n1][n2]*gridd.psi[i][j][n2];
+			 }
+			 gridd.vpsi[i][j][n1] = z;
+			}
+			}
+		}
+	}
 }

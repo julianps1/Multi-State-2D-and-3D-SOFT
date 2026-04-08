@@ -10,6 +10,17 @@ namespace wave {
 
 //Initialize the masses
 namespace wave {
+
+    void init_mass_2D(double h0, double h1)
+    //Initialize a generic x and y mass for a 2D system
+    {
+
+        amx = h0;
+        amy = h1;
+
+        std::cout << "MASS OF PARTICLE X: " << amx << std::endl;
+        std::cout << "MASS OF PARTICLE Y: " << amy << std::endl;
+    }
     
     void init_mass(double h0, double h1, double h2)
     //For atomic system like NaHF 
@@ -28,12 +39,4 @@ namespace wave {
         std::cout << "MASS OF THE COM " << amc << std::endl;
     }
 
-    void init_mass_electron()
-    {
-    
-        amx = 1;
-        amy = amx;
-        
-        std::cout << "USING ELECTRONIC MASS " << amx << std::endl;
-    }
 }

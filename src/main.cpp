@@ -48,19 +48,25 @@ int main()
               << "  ymin = " << grid::ymin
               << "  ymax = " << grid::ymax << '\n';
     std::cout << "Initial masses:\n"
-              << "  Na   = " << wave::h0 
-              << "  H1   = " << wave::h1
-              << "  H2   = " << wave::h2  << '\n';   
+              << "  h0   = " << wave::h0 
+              << "  h1   = " << wave::h1
+              << "  h2   = " << wave::h2  << '\n';   
     std::cout << "Potential:\n"
               << "  pot_name = " << grid::pot_name << '\n';
     std::cout << "Pi = " << pi << '\n';
     //Initialize
      fft::FFT2D(ni,nj); //Initialize FFT
-    
-    //Initialization of masses: Pick one
-     wave::init_mass(wave::h0,wave::h1,wave::h2); //For tri atomic system like NaHF
-     //wave::init_mass_electron(); //For electronic dynamics
-   
+    //Initialize masses, if 3 masses given will use triatomicx model, otherwise will use generic 2D mass
+    if (wave::h2 > 0.0)
+        {
+        wave::init_mass(wave::h0, wave::h1, wave::h2);
+        }
+    else
+        {
+        wave::init_mass_2D(wave::h0, wave::h1);
+        }    
+
+
     //Initialize grid and wavefunction
      grid::init_grid(grid::xmin,grid::ymin,grid::xmax,grid::ymax, gridd, grid::an0);
      grid::init_psi(grid::istate, gridd);

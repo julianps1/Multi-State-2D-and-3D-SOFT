@@ -24,14 +24,6 @@ namespace grid {
 		//	gridd.v[i][j][0][1] = gridd.v[i][j][1][0]; //Symmetric Coupling
 
 			
-			for (int n1 = 0; n1 < ns; ++n1)
-			{ cplx z(0.0, 0.0);
-			for (int n2 = 0; n2 < ns; ++n2)
-			{
-			 z = z+gridd.v[i][j][n1][n2]*gridd.psi[i][j][n2];
-			}
-			 gridd.vpsi[i][j][n1] = z;
-			}
 			
 			}
 		}
@@ -61,14 +53,6 @@ namespace grid {
 			gridd.v[i][j][0][1] = gridd.v[i][j][1][0]; //Symmetric Coupling
 
 
-			for (int n1 = 0; n1 < ns; ++n1)
-			{ cplx z(0.0, 0.0);
-			for (int n2 = 0; n2 < ns; ++n2)
-			{
-			 z = z+gridd.v[i][j][n1][n2]*gridd.psi[i][j][n2];
-			}
-			 gridd.vpsi[i][j][n1] = z;
-			}
 
 			}
 
@@ -99,14 +83,6 @@ namespace grid {
 			}
 			}
 
-			for (int n1 = 0; n1 < ns; ++n1)
-			{ cplx z(0.0, 0.0);
-			for (int n2 = 0; n2 < ns; ++n2)
-			{
-			 z = z+gridd.v[i][j][n1][n2]*gridd.psi[i][j][n2];
-			}
-			 gridd.vpsi[i][j][n1] = z;
-			}
     		}
 		}
 	   }
