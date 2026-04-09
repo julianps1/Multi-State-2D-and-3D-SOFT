@@ -102,7 +102,7 @@ namespace grid {
 
 	   	void pot_diag(GridData &gridd)
         {
-
+		
 		constexpr double eps = 1e-12;
 
 		for (int i = 0; i < ni; ++i)
@@ -114,7 +114,7 @@ namespace grid {
 			    double v12 = gridd.v[i][j][0][1];
 			
 			//diagonalize
-			
+			//Matrix is [cos,-sin,sin,cos]
 			double dv = v11-v22;
 			if (std::abs(dv) < eps) { dv = eps; }
             double theta = 0.5 * std::atan2(2.0 * v12, dv);
@@ -123,8 +123,8 @@ namespace grid {
 			gridd.vsin[i][j] = std::sin(theta);
 
 			double sqrtv12 = std::sqrt(dv * dv + 4.0 * v12 * v12);
-			gridd.vd[i][j][0] = 0.5 * (v11 + v22 - sqrtv12);
-			gridd.vd[i][j][1] = 0.5 * (v11 + v22 + sqrtv12);
+			gridd.vd[i][j][0] = 0.5 * (v11 + v22 + sqrtv12);
+			gridd.vd[i][j][1] = 0.5 * (v11 + v22 - sqrtv12);
 		}
 		}
 
