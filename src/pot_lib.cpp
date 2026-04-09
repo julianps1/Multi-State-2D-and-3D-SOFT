@@ -143,7 +143,7 @@ void run_nafh_driver(const std::string &surface_dir)
 		constexpr double X3 = 3.0;
 		constexpr double alpha = 3.0;
 		constexpr double beta = 1.5;
-		constexpr double gamma = 0.04;
+		constexpr double gamma = 0.01;
 		constexpr double Delta = 0.01; 
 
 		for (int i = 0; i < ni; ++i)
@@ -163,7 +163,7 @@ void run_nafh_driver(const std::string &surface_dir)
 		}
 	   }
 
-	void pot_psi(GridData &gridd)
+	void pot_LandauSomb(GridData &gridd)
           {
 		//constexpr double va = 0.17;
 		constexpr double re = 1.4;
@@ -195,7 +195,7 @@ void run_nafh_driver(const std::string &surface_dir)
 		switch (pot_name)
 		{
 		case 0:
-			pot_psi(gridd);
+			pot_LandauSomb(gridd);
 			break;
 		case 1:
 			pot_Ferretti(gridd);

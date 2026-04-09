@@ -41,7 +41,7 @@ namespace grid {
      void init_psiref(int istate, GridData &gridd);
      void print_psi(int iwa, GridData &gridd);
      void print_init_psi(GridData &gridd);
-     void pot_psi(GridData &gridd);
+     void pot_LandauSomb(GridData &gridd);
      void pot_Ferretti(GridData &gridd);
      void pot_doublewell(GridData &gridd);
      void load_surface_file(const std::string &path, GridData &gridd, int n1, int n2);
