@@ -196,15 +196,19 @@ void run_nafh_driver(const std::string &surface_dir)
 		{
 		case 0:
 			pot_LandauSomb(gridd);
+			std::cout << "Using Landau-Sombrero potential\n";
 			break;
 		case 1:
 			pot_Ferretti(gridd);
+			std::cout << "Using Ferretti potential\n";
 			break;
 		case 2:
 			pot_doublewell(gridd);
+			std::cout << "Using Double Well potential\n";
 			break;
 		case 3:
 			pot_NaFH(gridd);
+			std::cout << "Using NaFH potential\n";
 			break;
 		default:
 			std::cerr << "Invalid potential name: " << pot_name << "\n";

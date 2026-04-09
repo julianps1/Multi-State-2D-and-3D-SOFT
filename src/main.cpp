@@ -51,9 +51,6 @@ int main()
               << "  h0   = " << wave::h0 
               << "  h1   = " << wave::h1
               << "  h2   = " << wave::h2  << '\n';   
-    std::cout << "Potential:\n"
-              << "  pot_name = " << grid::pot_name << '\n';
-    std::cout << "Pi = " << pi << '\n';
     //Initialize
      fft::FFT2D(ni,nj); //Initialize FFT
     //Initialize masses, if 3 masses given will use triatomicx model, otherwise will use generic 2D mass
@@ -75,7 +72,8 @@ int main()
      grid::print_psi(grid::iwa, gridd);
      grid::print_init_psi(gridd); //Print the reference functions for correlations
      std::cout << "Initial energy...\n";
-     grid::Ham(f2d, gridd, grid::pot_name); //Initialize potential and Initial E
+     grid::pick_pot(grid::pot_name, gridd);
+     grid::Ham(f2d, gridd); //Initialize potential and Initial E
      if (ns == 2)
         {
         std::cout << "2-state system: Diagonalizing Potential... \n";  
@@ -126,7 +124,7 @@ int main()
     //Recompute final energy
     std::cout << "\n";
     std::cout << "Final energy...\n";
-    grid::Ham(f2d, gridd, grid::pot_name);
+    grid::Ham(f2d, gridd);
 
     //Check Norm
     double norm = 0.0;

@@ -73,10 +73,8 @@ cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns])
     return z;
 }
 
-void Ham(fft::FFT2D &f2d, GridData &gridd, int pot_name)
+void Ham(fft::FFT2D &f2d, GridData &gridd)
 {
-  pick_pot(pot_name, gridd);
-
   compute_vpsi(gridd);
  
   cplx zkin = {0.0, 0.0};

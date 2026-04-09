@@ -65,7 +65,7 @@ namespace grid {
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
      cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
      cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);
-     void Ham(fft::FFT2D &f2d, GridData &gridd, int pot_name);
+     void Ham(fft::FFT2D &f2d, GridData &gridd);
 }
 
 extern grid::GridData gridd;
