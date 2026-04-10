@@ -40,7 +40,7 @@ plot \
 
 set title "Auto-Correlation"
 set yrange[0:2]
-set ylabel "|C(t)|"
+set ylabel "|C(t)|^2"
 set output "output/AbsAutoCorr.png"
 plot \
     "output/correl.dat" u 1:4 with lines ls 1 notitle

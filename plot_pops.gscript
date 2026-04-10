@@ -29,8 +29,14 @@ set style line 2 lc rgb "blue" lw 3 dashtype solid # Imaginary
 # Plot
 ##########################
 plot \
-    "output/populations.dat" using 1:2 with lines ls 1 title "S_0",\
-    "output/populations.dat" using 1:3 with lines ls 2 title "S_1" 
+    "output/populations.dat" using 1:2 with lines ls 1 title "D_0",\
+    "output/populations.dat" using 1:3 with lines ls 2 title "D_1" 
+
+set output "output/AdiPopulations.png"
+set title "Adiabatic Populations"
+plot \
+    "output/adipopulations.dat" using 1:2 with lines ls 1 title "S_0",\
+    "output/adipopulations.dat" using 1:3 with lines ls 2 title "S_1" 
 
 ##########################
 # Finish output

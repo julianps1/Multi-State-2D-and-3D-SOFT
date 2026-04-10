@@ -113,6 +113,7 @@ int main()
         grid::crosscorr(gridd, t); //Cross correlation with psi_ref
         grid::compute_populations(gridd, t); //Compute populations in each state
         grid::RxnProb(gridd, t); //Reaction probability for double well system
+        if(ns == 2) { grid::compute_adipopulations(gridd, t); } //Compute adiabatic populations for 2 state system, may throw error if ns!= 2
 
         if (it % wave::nwpackets == 0)
         {

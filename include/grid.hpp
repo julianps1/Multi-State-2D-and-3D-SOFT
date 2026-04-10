@@ -62,6 +62,7 @@ namespace grid {
      void RxnWeight(GridData &gridd);
      void RxnProb(GridData &gridd, double t);
      void compute_populations(GridData &gridd, double t);
+     void compute_adipopulations(GridData &gridd, double t);
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
      cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
      cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);

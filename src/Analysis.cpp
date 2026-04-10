@@ -36,6 +36,34 @@ void compute_populations(GridData &gridd, double t)
     outfile << "\n"; //New line after all states appended
 }
 
+void compute_adipopulations(GridData &gridd, double t)
+{
+    std::string filename = "output/adipopulations.dat";
+    std::ofstream outfile(filename, std::ios::app);
+    //outfile << "#t,pop0,pop1\n"; //File header
+
+    //FOR TWO STATES ONLY
+
+
+    outfile << t << " ";
+        double pop0 = 0.0;
+        double pop1 = 0.0;
+        for (int i = 0; i < ni; ++i)
+        {
+            for (int j = 0; j < nj; ++j)
+            {
+               cplx z1 = (gridd.vcos[i][j] * gridd.psi[i][j][0] - gridd.vsin[i][j] * gridd.psi[i][j][1]);
+               cplx z2 = (gridd.vsin[i][j] * gridd.psi[i][j][0] + gridd.vcos[i][j] * gridd.psi[i][j][1]);
+            
+               pop0 += std::norm(z1);
+               pop1 += std::norm(z2);
+            }
+        }
+        outfile << pop0 << " " << pop1 << " ";
+
+    outfile << "\n"; //New line after all states appended
+}
+
 void write_potential(GridData &gridd)
 {
     
