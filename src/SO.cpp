@@ -37,7 +37,7 @@ void apply_potential_phase(GridData &gridd, double ts)
         z2 = z2 * std::exp(im * gridd.vd[i][j][1] * ts);
         
         gridd.psi[i][j][0] = gridd.vcos[i][j] * z1 + gridd.vsin[i][j] * z2;
-        gridd.psi[i][j][1] = -gridd.vsin[i][j] * z1 + gridd.vcos[i][j] * z2;
+        gridd.psi[i][j][1] =-gridd.vsin[i][j] * z1 + gridd.vcos[i][j] * z2;
 
     }
     }

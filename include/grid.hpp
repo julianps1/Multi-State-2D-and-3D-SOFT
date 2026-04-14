@@ -51,6 +51,7 @@ namespace grid {
      void pick_pot(int pot_name, GridData &gridd);
      void compute_vpsi(GridData &gridd);
      void pot_diag(GridData &gridd);
+     double stitch_theta_branch(double theta, double reference);
      void write_potential(GridData &gridd);
      void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd, double ts);
      void apply_potential_phase(GridData &gridd, double ts);

@@ -27,3 +27,7 @@ do for [i=1:words(cols)] {
 
     splot file using 1:2:col with pm3d
 }
+
+set output "output/theta.png"
+set title "theta"
+splot "output/theta.dat" u 1:2:3 with pm3d

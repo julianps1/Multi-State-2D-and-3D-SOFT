@@ -1,5 +1,5 @@
 dt 0.5 		
-tmax 3000
+tmax 30
 tsub 10
 xmin -2.0
 xmax 5.0		
@@ -12,8 +12,8 @@ beta 12.88
 y0 0.0
 py0 0
 nwpackets 100
-h0 20000.0
-h1 6667.0
+h0 200.0
+h1 66.0
 h2 0.0
 istate 0
 pot_name 1
