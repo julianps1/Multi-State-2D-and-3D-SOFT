@@ -7,6 +7,9 @@
 # Ignore object files
 *.o
 
+# Ignore old code
+*.old
+
 # Ignore executable
 sim
 
