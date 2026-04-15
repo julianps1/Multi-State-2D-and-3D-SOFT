@@ -34,6 +34,10 @@ namespace grid {
     cplx psiref[ni][nj][ns];
     cplx tpsi[ni][nj];
 	cplx tmp[ni][nj];
+    cplx expv[ni][nj][ns];
+    cplx expk[ni][nj];
+
+
 	};
     
      void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0);
@@ -53,10 +57,11 @@ namespace grid {
      void pot_diag(GridData &gridd);
      double stitch_theta_branch(double theta, double reference);
      void write_potential(GridData &gridd);
-     void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd, double ts);
-     void apply_potential_phase(GridData &gridd, double ts);
-     void apply_1_state_potential_phase(GridData &gridd, double ts);
-     void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d);
+     void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd);
+     void apply_potential_phase(GridData &gridd);
+     void apply_1_state_potential_phase(GridData &gridd);
+     void init_exp(double ts, double ts2, GridData &gridd);
+     void split(GridData &gridd, fft::FFT2D &f2d);
      void potential_step(GridData &gridd, int n);
      void corr(GridData &gridd, double t);
      void crosscorr(GridData &gridd, double t);     

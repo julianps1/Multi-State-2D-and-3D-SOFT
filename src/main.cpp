@@ -83,6 +83,8 @@ int main()
 
     //DOUBE WELL INITIALIZE WEIGHTS FOR RXN PROB
     grid::RxnWeight(gridd);
+    grid::init_exp(wave::dtsub, wave::dt2, gridd); //Precompute kinetic and potential phase factors for split operator method
+    std::cout << "Initialization complete, starting time propagation... \n";
 
     //Time loop
     double t = 0.0;
@@ -113,7 +115,7 @@ int main()
         }
         for (int isub = 0; isub < wave::tsub; ++isub)
         {
-            grid::split(wave::dtsub, wave::dt2, gridd, f2d);
+            grid::split(gridd, f2d);
             t += wave::dtsub;
         }
 

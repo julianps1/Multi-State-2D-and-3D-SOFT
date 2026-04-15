@@ -11,19 +11,20 @@
 
 namespace grid {
 
-void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd, double ts)
+void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd)
 {
     for (int i = 0; i < ni; ++i)
     {
     for (int j = 0; j < nj; ++j)
     {
-        cplx phase = std::exp(im * ts * gridd.ak2[i][j]);
+
+        cplx phase = gridd.expk[i][j];
          wf[i][j] *= phase;
 
     }
     }
 }
-void apply_potential_phase(GridData &gridd, double ts)
+void apply_potential_phase(GridData &gridd)
 {
     //For a rotation matrix U:=[cos,-sin,sin,cos]
     for (int i = 0; i < ni; ++i)
@@ -32,9 +33,9 @@ void apply_potential_phase(GridData &gridd, double ts)
     {
         
         cplx z1 = (gridd.vcos[i][j] * gridd.psi[i][j][0] - gridd.vsin[i][j] * gridd.psi[i][j][1]);
-        z1 = z1 * std::exp(im * gridd.vd[i][j][0] * ts);
+        z1 *= gridd.expv[i][j][0];
         cplx z2 = (gridd.vsin[i][j] * gridd.psi[i][j][0] + gridd.vcos[i][j] * gridd.psi[i][j][1]);
-        z2 = z2 * std::exp(im * gridd.vd[i][j][1] * ts);
+        z2 *= gridd.expv[i][j][1];
         
         gridd.psi[i][j][0] = gridd.vcos[i][j] * z1 + gridd.vsin[i][j] * z2;
         gridd.psi[i][j][1] =-gridd.vsin[i][j] * z1 + gridd.vcos[i][j] * z2;
@@ -42,19 +43,38 @@ void apply_potential_phase(GridData &gridd, double ts)
     }
     }
 }
-void apply_1_state_potential_phase(GridData &gridd, double ts)
+void apply_1_state_potential_phase(GridData &gridd)
 {
     for (int i = 0; i < ni; ++i)
     {
     for (int j = 0; j < nj; ++j)
     {
-        
-        gridd.psi[i][j][0] = gridd.psi[i][j][0] * std::exp(im * gridd.v[i][j][0][0] * ts);
+        cplx phase = gridd.expv[i][j][0];
+        gridd.psi[i][j][0] *= phase;
 
     }
     }
 }
-void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d) //Propagate the wavefunction (gridd.psi) for one time step using the split-operator method
+void init_exp(double ts, double ts2, GridData &gridd)
+{
+    for (int i = 0; i < ni; ++i)
+    {
+    for (int j = 0; j < nj; ++j)
+    {
+        if (ns == 1)
+        {
+        gridd.expv[i][j][0] = std::exp(im * gridd.v[i][j][0][0] * ts);
+        }
+        else
+        {
+        gridd.expv[i][j][0] = std::exp(im * gridd.vd[i][j][0] * ts);
+        gridd.expv[i][j][1] = std::exp(im * gridd.vd[i][j][1] * ts);
+        }
+        gridd.expk[i][j] = std::exp(im * ts2 * gridd.ak2[i][j]);
+    }
+    }
+}
+void split(GridData &gridd, fft::FFT2D &f2d) //Propagate the wavefunction (gridd.psi) for one time step using the split-operator method
 {
     double N = 1.0/(ni*nj);
     for (int n = 0; n < ns; ++n)
@@ -68,7 +88,7 @@ void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d) //Propagate 
          }
     
         fft::run(f2d, gridd.tmp, 1); //Forward FFT, output goes to tspi
-        apply_kinetic_phase(gridd.tpsi, gridd, ts2);
+        apply_kinetic_phase(gridd.tpsi, gridd);
         fft::run(f2d, gridd.tpsi, -1); //Backward FFT, output goes to tspi
 
         for (int i = 0; i<ni; ++i)
@@ -82,11 +102,11 @@ void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d) //Propagate 
 
     if (ns == 1)
     {
-        apply_1_state_potential_phase(gridd, ts); //Only using first state as this is a single state model
+        apply_1_state_potential_phase(gridd); //Only using first state as this is a single state model
     }
     else
     {
-        apply_potential_phase(gridd, ts); //Using both states for potential phase
+        apply_potential_phase(gridd); //Using both states for potential phase
     }
 
     for (int n = 0; n < ns; ++n)
@@ -100,7 +120,7 @@ void split(double ts, double ts2, GridData &gridd, fft::FFT2D &f2d) //Propagate 
          }
     
         fft::run(f2d, gridd.tmp, 1); //Forward FFT, output goes to tspi
-        apply_kinetic_phase(gridd.tpsi, gridd, ts2);
+        apply_kinetic_phase(gridd.tpsi, gridd);
         fft::run(f2d, gridd.tpsi, -1); //Backward FFT, output goes to tspi
 
         for (int i = 0; i<ni; ++i)
