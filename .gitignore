@@ -10,6 +10,9 @@
 # Ignore old code
 *.old
 
+# Ignore extra inputs
+INq_*
+
 # Ignore executable
 sim
 
