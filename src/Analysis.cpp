@@ -219,6 +219,9 @@ void write_potential(GridData &gridd)
                      << " " << std::imag(gridd.c[n]) 
                      << " " << std::norm(gridd.c[n]); 
     }
+
+    outfile << '\n'; //Blank line after all states appended
+
     }
     void RxnWeight(GridData &gridd)
     //Define the reaction region with a weight function (for double well system)

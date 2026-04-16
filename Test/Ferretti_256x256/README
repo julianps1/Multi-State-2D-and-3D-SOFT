@@ -1,4 +1,16 @@
-##Benchmark for Ferretti model
+##Benchmark for the Ferretti model
 
-This folder contains the converged results for a simulation on a 256x256 grid for the 2-state Ferretti model. After compilation or modification this model can
-be run to compare results and ensure no bugs were introduced. The input file to run the calculation is in INq, grid parameters are defiend in globals.hpp
+This folder contains the converged results for a simulation on a 256x256 grid for the 2-state Ferretti model. 
+
+Parameters:
+constexpr double Kx = 0.02;
+constexpr double Ky = 0.1;
+constexpr double X1 = 4.0;
+constexpr double X2 = 3.0;
+constexpr double X3 = 3.0;
+constexpr double alpha = 3.0;
+constexpr double beta = 1.5;
+constexpr double gamma = 0.01;
+constexpr double Delta = 0.01;
+
+After compilation or modification this model can be run to compare results and ensure no bugs were introduced. The input file to run the calculation is in INq, grid parameters are defiend in globals.hpp. Data can be compared to the .dat files in this folder. 

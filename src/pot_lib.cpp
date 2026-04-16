@@ -115,7 +115,7 @@ void run_nafh_driver(const std::string &surface_dir)
 		constexpr double eta = 1/1.3544;
 		constexpr double b =  1.0;
 		constexpr double c =  1.0;
-		constexpr double d = 1.0; //Linear Coupling
+		constexpr double d = 0.0; //Linear Coupling
 
 		for (int i = 0; i < ni; ++i)
 		{
