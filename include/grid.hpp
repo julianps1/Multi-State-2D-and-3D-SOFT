@@ -52,6 +52,7 @@ namespace grid {
      void write_nafh_input_file(const std::string &path);
      void run_nafh_driver(const std::string &surface_dir);
      void pot_NaFH(GridData &gridd);
+     void pot_h2p(GridData &gridd);
      void pick_pot(int pot_name, GridData &gridd);
      void compute_vpsi(GridData &gridd);
      void pot_diag(GridData &gridd);

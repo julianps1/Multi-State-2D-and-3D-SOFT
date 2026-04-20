@@ -11,6 +11,27 @@
 
 namespace grid{
 
+void pot_h2p(GridData &gridd)
+{
+	constexpr double k1 = 1.0;
+	constexpr double k2 =  1.0;
+	constexpr double kappa =  1.0;
+	constexpr double V0 = 0.0; 
+
+	for (int i = 0; i < ni; ++i)
+	{
+	for (int j = 0; j < nj; ++j)
+		{
+			double xp = - kappa * gridd.yg[j] * gridd.yg[j];
+			double h1 = gridd.xg[i] - 0.5 * gridd.yg[j];
+			double h2 = gridd.xg[i] + 0.5 * gridd.yg[j];
+
+			gridd.v[i][j][0][0] = V0 * std::exp(xp) + 0.5 * k1 * h1 * h1 + 0.5 * k2 * h2 * h2;
+			
+		}
+	}
+}	
+
 void load_surface_file(const std::string &path, GridData &gridd, int n1, int n2)
 {
 	std::ifstream infile(path);
@@ -209,6 +230,10 @@ void run_nafh_driver(const std::string &surface_dir)
 		case 3:
 			pot_NaFH(gridd);
 			std::cout << "Using NaFH potential\n";
+			break;
+		case 4:
+			pot_h2p(gridd);
+			std::cout << "Using Model H2+ potential\n";
 			break;
 		default:
 			std::cerr << "Invalid potential name: " << pot_name << "\n";
