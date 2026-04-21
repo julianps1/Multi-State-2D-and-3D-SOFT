@@ -1,0 +1,93 @@
+# Plot Correlation Funciton
+# Output: png file
+
+input_file = "INq"
+nmom = real(system(sprintf("awk '$1==\"nmom\" {print $2}' %s", input_file)))
+
+if (nmom == 1) {
+    array List[2]
+    ntot = 2
+    List[1] = "x"
+    List[2] = "y"
+} else {
+    if (nmom == 2) {
+        ntot = 5
+        array List[ntot]
+        List[1] = "x"
+        List[2] = "y"
+        List[3] = "x^2"
+        List[4] = "xy"
+        List[5] = "y^2"
+    } else {
+        if (nmom == 3) {
+            ntot = 9
+            array List[ntot]
+            List[1] = "x"
+            List[2] = "y"
+            List[3] = "x^2"
+            List[4] = "xy"
+            List[5] = "y^2"
+            List[6] = "x^3"
+            List[7] = "x^2y"
+            List[8] = "xy^2"
+            List[9] = "y^3"
+        } else {
+            if (nmom == 4) {
+                ntot = 14
+                array List[ntot]
+                List[1] = "x"
+                List[2] = "y"
+                List[3] = "x^2"
+                List[4] = "xy"
+                List[5] = "y^2"
+                List[6] = "x^3"
+                List[7] = "x^2y"
+                List[8] = "xy^2"
+                List[9] = "y^3"
+                List[10] = "x^4"
+                List[11] = "x^3y"
+                List[12] = "x^2y^2"
+                List[13] = "xy^3"
+                List[14] = "y^4"
+            } else {
+                print "WARNING: Labels not defined for this number of moments"
+                exit
+            }
+        }
+    }
+}
+##########################
+# Output settings
+##########################
+
+set terminal pngcairo enhanced color font 'Times-New-Roman,20'
+#set output "output/Populations.png"
+
+##########################
+# Labels and styling
+##########################
+set xlabel "Time (Dau)"
+#set ylabel "Population"
+#set title "State Populations"
+
+##########################
+# Line styles
+##########################
+set style line 1 lc rgb "red" lw 3 dashtype solid # Real
+
+##########################
+# Plot
+##########################
+do for [i=1:ntot] {
+
+    set ylabel sprintf("<%s>", List[i])
+    set title sprintf("Moment in %s", List[i])
+    set output sprintf("output/Moment_%s.png", List[i])
+    
+    plot \
+    "output/moments.dat" using 1:i+1 with lines ls 1 notitle
+}
+##########################
+# Finish output
+##########################
+unset output

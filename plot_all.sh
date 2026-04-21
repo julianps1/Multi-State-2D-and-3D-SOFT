@@ -12,4 +12,5 @@ gnuplot plotting/plot_rxnprob.gscript
 gnuplot -c plotting/plot_ref.gscript "output/psiref.dat"
 gnuplot plotting/plot_pops.gscript
 gnuplot plotting/plot_pot.gscript
+gnuplot plotting/plot_moments.gscript
 echo "Done :)"

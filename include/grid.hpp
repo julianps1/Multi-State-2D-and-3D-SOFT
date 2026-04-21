@@ -9,7 +9,7 @@ namespace fft {
 
 namespace grid {
     extern double xmin, ymin, xmax, ymax, dx, dy, an0; 
-    extern int istate,iwa,pot_name;
+    extern int istate,iwa,pot_name,nmom;
 
     struct GridData
 	{
@@ -56,7 +56,6 @@ namespace grid {
      void pick_pot(int pot_name, GridData &gridd);
      void compute_vpsi(GridData &gridd);
      void pot_diag(GridData &gridd);
-     double stitch_theta_branch(double theta, double reference);
      void write_potential(GridData &gridd);
      void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd);
      void apply_potential_phase(GridData &gridd);
@@ -71,6 +70,7 @@ namespace grid {
      void compute_populations(GridData &gridd, double t);
      void compute_adipopulations(GridData &gridd, double t);
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
+     void compute_moments(GridData &gridd, double t, int nmom);
      cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
      cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);
      void Ham(fft::FFT2D &f2d, GridData &gridd);

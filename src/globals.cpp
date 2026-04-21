@@ -30,6 +30,7 @@ static std::unordered_map<std::string,int*> int_params = {
     {"nwpackets",   &wave::nwpackets},
     {"istate", &grid::istate},
     {"pot_name", &grid::pot_name},
+    {"nmom", &grid::nmom},
 }; 
 
 void init(const std::string &fname)

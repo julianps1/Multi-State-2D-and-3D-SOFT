@@ -13,6 +13,36 @@
 
 namespace grid {
 
+
+void compute_moments(GridData &gridd, double t, int nmom)
+{
+    std::string filename = "output/moments.dat";
+    std::ofstream outfile(filename, std::ios::app);
+
+    if (ns != 1) std::cout << "WARNING: MOMENTS ONLY IMPLEMENTED FOR GROUND STATE \n";
+
+    double cmom = 0.0; 
+
+    outfile << t << " ";
+    for (int nm = 1; nm < nmom + 1; ++nm)
+    {
+        for (int nx = 0; nx < nm + 1; ++nx)
+        {
+            cmom = 0.0; 
+            for (int i = 0; i < ni; ++i)
+            {
+            for (int j = 0; j < nj; ++j)
+            {
+                cmom += std::norm(gridd.psi[i][j][0]) * std::pow(gridd.xg[i], nm - nx) * std::pow(gridd.yg[j], nx); //Just ground state for now
+            }
+            }
+            outfile << cmom << " ";
+        }
+    }
+    outfile << "\n"; //New line after all moments appended
+
+}
+
 void compute_populations(GridData &gridd, double t)
 {
     std::string filename = "output/populations.dat";
