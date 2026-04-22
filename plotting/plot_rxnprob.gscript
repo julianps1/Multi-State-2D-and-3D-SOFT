@@ -12,7 +12,7 @@ set output "output/ReactionProb.png"
 # Labels and styling
 ##########################
 set xlabel "Time (Dau)"
-set ylabel "P(x1 > t)"
+set ylabel "Rxn Prob"
 set title "Reaction Probability"
 #set grid
 #unset key
@@ -30,6 +30,12 @@ set style line 2 lc rgb "blue" lw 3 dashtype solid # Imaginary
 ##########################
 plot \
     "output/RxnProb.dat" using 1:2 with lines ls 1 notitle 
+
+set title "Flux"
+set ylabel "Flux"
+set output "output/Flux.png"
+plot \
+    "output/Flux.dat" using 1:2 with lines ls 1 notitle
 
 ##########################
 # Finish output

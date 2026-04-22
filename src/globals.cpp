@@ -22,6 +22,8 @@ static std::unordered_map<std::string,double*> double_params = {
     {"h0",   &wave::h0},
     {"h1",   &wave::h1},
     {"h2",   &wave::h2},
+    {"rCAP", &grid::rCAP},
+    {"kCAP", &grid::kCAP},
 };
 
 static std::unordered_map<std::string,int*> int_params = {
@@ -31,6 +33,7 @@ static std::unordered_map<std::string,int*> int_params = {
     {"istate", &grid::istate},
     {"pot_name", &grid::pot_name},
     {"nmom", &grid::nmom},
+    {"DN", &grid::DN},
 }; 
 
 void init(const std::string &fname)

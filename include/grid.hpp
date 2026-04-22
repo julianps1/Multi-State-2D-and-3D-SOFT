@@ -8,8 +8,8 @@ namespace fft {
 }
 
 namespace grid {
-    extern double xmin, ymin, xmax, ymax, dx, dy, an0; 
-    extern int istate,iwa,pot_name,nmom;
+    extern double xmin, ymin, xmax, ymax, dx, dy, an0, rCAP, kCAP; 
+    extern int istate,iwa,pot_name,nmom,DN;
 
     struct GridData
 	{
@@ -18,12 +18,13 @@ namespace grid {
 	double xg[ni];
 	double yg[nj];
 
-	double v[ni][nj][ns][ns];
+	cplx v[ni][nj][ns][ns];
 	double vcos[ni][nj];
 	double vsin[ni][nj];
-    double wt[ni];
+    double wt[ni][nj];
 
 	cplx c[ns];
+    cplx rc[ns];
     cplx cc[ns];
 	cplx vd[ni][nj][ns];
 
@@ -43,6 +44,7 @@ namespace grid {
      void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0);
      void init_psi(int istate, GridData &gridd);
      void init_psiref(int istate, GridData &gridd);
+	 void init_CAP(GridData &gridd, double rCAP, double kCAP);
      void print_psi(int iwa, GridData &gridd);
      void print_init_psi(GridData &gridd);
      void pot_LandauSomb(GridData &gridd);
@@ -65,8 +67,8 @@ namespace grid {
      void potential_step(GridData &gridd, int n);
      void corr(GridData &gridd, double t);
      void crosscorr(GridData &gridd, double t);     
-     void RxnWeight(GridData &gridd);
-     void RxnProb(GridData &gridd, double t);
+     void RxnWeight(GridData &gridd, int DN, double rCAP);
+     void RxnProb(GridData &gridd, double t, double ts);
      void compute_populations(GridData &gridd, double t);
      void compute_adipopulations(GridData &gridd, double t);
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
@@ -74,6 +76,7 @@ namespace grid {
      cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
      cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);
      void Ham(fft::FFT2D &f2d, GridData &gridd);
+     double compute_flux(const GridData &gridd, const double rCAP);
 }
 
 extern grid::GridData gridd;

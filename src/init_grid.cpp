@@ -10,8 +10,8 @@
 grid::GridData gridd;
 
 namespace grid {
-	double xmin, ymin, xmax, ymax, dx, dy, an0;
-    int istate, iwa, pot_name, nmom;
+	double xmin, ymin, xmax, ymax, dx, dy, an0, rCAP, kCAP;
+    int istate, iwa, pot_name, nmom, DN;
 
 	void init_psi(int istate, GridData &gridd)
     {	
@@ -113,9 +113,9 @@ namespace grid {
 		{
 		for (int j = 0; j < nj; ++j)
     		{
-    			double v11 = gridd.v[i][j][0][0];
-		    	double v22 = gridd.v[i][j][1][1];
-			    double v12 = gridd.v[i][j][0][1];
+    			double v11 = std::real(gridd.v[i][j][0][0]);
+		    	double v22 = std::real(gridd.v[i][j][1][1]);
+			    double v12 = std::real(gridd.v[i][j][0][1]);
 			
 			//diagonalize
 			//Matrix is [cos,-sin,sin,cos]
@@ -137,9 +137,9 @@ namespace grid {
 				gridd.vsin[i][j] = std::sin(theta);
 			 }
 			
-			double vd12 = 2 * gridd.vcos[i][j] * gridd.vcos[i][j] * gridd.v[i][j][0][1] + gridd.vsin[i][j] * gridd.vcos[i][j] * (gridd.v[i][j][0][0] - gridd.v[i][j][1][1]) - gridd.v[i][j][0][1];
-			gridd.vd[i][j][0] = gridd.vcos[i][j]*gridd.vcos[i][j]*gridd.v[i][j][0][0] + gridd.vsin[i][j]*gridd.vsin[i][j]*gridd.v[i][j][1][1] - 2*gridd.vsin[i][j]*gridd.vcos[i][j]*gridd.v[i][j][0][1];
-			gridd.vd[i][j][1] = gridd.vcos[i][j]*gridd.vcos[i][j]*gridd.v[i][j][1][1] + gridd.vsin[i][j]*gridd.vsin[i][j]*gridd.v[i][j][0][0] + 2*gridd.vsin[i][j]*gridd.vcos[i][j]*gridd.v[i][j][0][1];
+			double vd12 = 2 * gridd.vcos[i][j] * gridd.vcos[i][j] * v12 + gridd.vsin[i][j] * gridd.vcos[i][j] * (v11 - v22) - v12;
+			gridd.vd[i][j][0] = gridd.vcos[i][j]*gridd.vcos[i][j]*v11 + gridd.vsin[i][j]*gridd.vsin[i][j]*v22 - 2*gridd.vsin[i][j]*gridd.vcos[i][j]*v12;
+			gridd.vd[i][j][1] = gridd.vcos[i][j]*gridd.vcos[i][j]*v22 + gridd.vsin[i][j]*gridd.vsin[i][j]*v11 + 2*gridd.vsin[i][j]*gridd.vcos[i][j]*v12;
 
 			outfile << gridd.xg[i] << " " << gridd.yg[j] << " " << vd12 << "\n";
 			
@@ -147,6 +147,51 @@ namespace grid {
 			outfile << "\n"; //Blank line after each i row for gnuplot grid formatting
 		}
 	}
+
+	void init_CAP(GridData &gridd, double rCAP, double kCAP)
+	{
+		if (ns == 1)
+			{
+				for (int i = 0; i < ni; ++i)
+				{
+				for (int j = 0; j < nj; ++j)
+				{
+					double t1 = std::abs(gridd.xg[i]) - rCAP;
+					if (t1 > 0)
+					{
+						gridd.v[i][j][0][0] +=  im * kCAP * t1 * t1;
+					}
+					double t2 = std::abs(gridd.yg[j]) - rCAP;
+					if (t2 > 0)
+					{
+						gridd.v[i][j][0][0] +=  im * kCAP * t2 * t2;
+					}
+				}
+				}
+			}
+		else
+			{
+				for (int i = 0; i < ni; ++i)
+				{
+				for (int j = 0; j < nj; ++j)
+				{
+					double t1 = std::abs(gridd.xg[i]) - rCAP;
+					if (t1 > 0)
+					{
+						gridd.vd[i][j][0] +=  im * kCAP * t1 *t1;
+						gridd.vd[i][j][1] +=  im * kCAP * t1 *t1;
+					}
+					double t2 = std::abs(gridd.yg[j]) - rCAP;
+					if (t2 > 0)
+					{
+						gridd.vd[i][j][0] +=  im * kCAP * t2 *t2;
+						gridd.vd[i][j][1] +=  im * kCAP * t2 *t2;
+					}
+				}
+				}
+			}
+	}
+
 		
 	void compute_vpsi(GridData &gridd)
 	{

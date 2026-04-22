@@ -50,10 +50,16 @@ int main()
     std::cout << "Initial masses:\n"
               << "  h0   = " << wave::h0 
               << "  h1   = " << wave::h1
-              << "  h2   = " << wave::h2  << '\n';   
-    //Initialize
-     fft::FFT2D(ni,nj); //Initialize FFT
-    //Initialize masses, if 3 masses given will use triatomicx model, otherwise will use generic 2D mass
+              << "  h2   = " << wave::h2  << '\n';
+    std::cout << "Complex Absorbing Potential (CAP) parameters:\n"
+              << "  rCAP  = " << grid::rCAP
+              << "  kCAP  = " << grid::kCAP
+              << "  DN    = " << grid::DN << '\n'; 
+  
+    //Initialize FFT
+     fft::FFT2D(ni,nj);
+    
+    //Initialize masses, if 3 masses given will use triatomic model, otherwise will use generic 2D mass
     if (wave::h2 > 0.0)
         {
         wave::init_mass(wave::h0, wave::h1, wave::h2);
@@ -63,11 +69,10 @@ int main()
         wave::init_mass_2D(wave::h0, wave::h1);
         }    
 
-
     //Initialize grid and wavefunction
      grid::init_grid(grid::xmin,grid::ymin,grid::xmax,grid::ymax, gridd, grid::an0);
      grid::init_psi(grid::istate, gridd);
-     grid::init_psiref(grid::istate, gridd);
+     grid::init_psiref(grid::istate, gridd); //Reference wf for cross correlation, modify as needed
      grid::iwa = 0;
      grid::print_psi(grid::iwa, gridd);
      grid::print_init_psi(gridd); //Print the reference functions for correlations
@@ -79,22 +84,24 @@ int main()
         std::cout << "2-state system: Diagonalizing Potential... \n";  
         grid::pot_diag(gridd);
         }
+     grid::init_CAP(gridd, grid::rCAP, grid::kCAP);
      grid::write_potential(gridd);
+     grid::init_exp(wave::dtsub, wave::dt2, gridd); //Precompute kinetic and potential phase factors for split operator method
+    
+    //Initialize Analysis functions for specific models
+    grid::RxnWeight(gridd, grid::DN, grid::rCAP); //May need to modify how weights are defined dependning on model
 
-    //DOUBE WELL INITIALIZE WEIGHTS FOR RXN PROB
-    grid::RxnWeight(gridd);
-    grid::init_exp(wave::dtsub, wave::dt2, gridd); //Precompute kinetic and potential phase factors for split operator method
-    std::cout << "Initialization complete, starting time propagation... \n";
+    //std::cout << "Initialization complete, starting time propagation... \n";
 
     //Time loop
     double t = 0.0;
 
-    //Print initial values
+    //Print initial values to outputs. Add/remove analysis modules as needed
     grid::corr(gridd, t); //Autocorrelation
     grid::crosscorr(gridd, t); //Cross correlation with psi_ref
     grid::compute_populations(gridd, t); //Compute populations in each state
-    grid::RxnProb(gridd, t); //Reaction probability for double well system
-    grid::compute_moments(gridd, t, grid::nmom);
+    grid::RxnProb(gridd, t, wave::dt); //Reaction probability for double well system
+    //grid::compute_moments(gridd, t, grid::nmom);
     if(ns == 2) { grid::compute_adipopulations(gridd, t); } //Compute adiabatic populations for 2 state system, may throw error if ns!= 2
     
     // Progress bar setup
@@ -120,11 +127,12 @@ int main()
             t += wave::dtsub;
         }
 
+        //Analysis modules. Add/remove as needed
         grid::corr(gridd, t); //Autocorrelation
         grid::crosscorr(gridd, t); //Cross correlation with psi_ref
         grid::compute_populations(gridd, t); //Compute populations in each state
-        grid::RxnProb(gridd, t); //Reaction probability for double well system
-        grid::compute_moments(gridd, t, grid::nmom);
+        grid::RxnProb(gridd, t, wave::dt); //Reaction probability, based on how weights are defined
+        //grid::compute_moments(gridd, t, grid::nmom);
         if(ns == 2) { grid::compute_adipopulations(gridd, t); } //Compute adiabatic populations for 2 state system, may throw error if ns!= 2
 
         if (it % wave::nwpackets == 0)

@@ -13,7 +13,6 @@
 
 namespace grid {
 
-
 void compute_moments(GridData &gridd, double t, int nmom)
 {
     std::string filename = "output/moments.dat";
@@ -110,7 +109,8 @@ void write_potential(GridData &gridd)
         {
 		outfile << gridd.xg[i] << " "
         		<< gridd.yg[j] << " "
-		        << gridd.v[i][j][0][0] << "\n";
+		        << std::real(gridd.v[i][j][0][0]) << " " 
+                << std::imag(gridd.v[i][j][0][0]) << "\n";
         }
 
         // blank line for gnuplot grid formatting
@@ -127,9 +127,9 @@ void write_potential(GridData &gridd)
         {
 		outfile << gridd.xg[i] << " "
         		<< gridd.yg[j] << " "
-		        << gridd.v[i][j][0][0] << " "
-		        << gridd.v[i][j][1][1] << " "
-		        << gridd.v[i][j][0][1] << " "
+		        << std::real(gridd.v[i][j][0][0]) << " "
+		        << std::real(gridd.v[i][j][1][1]) << " "
+		        << std::real(gridd.v[i][j][0][1]) << " "
 		        << std::real(gridd.vd[i][j][0]) << " "
 		        << std::imag(gridd.vd[i][j][0]) << " "
 		        << std::real(gridd.vd[i][j][1]) << " "
@@ -253,43 +253,121 @@ void write_potential(GridData &gridd)
     outfile << '\n'; //Blank line after all states appended
 
     }
-    void RxnWeight(GridData &gridd)
-    //Define the reaction region with a weight function (for double well system)
+    void RxnWeight(GridData &gridd, int DN, double rCUT)
+    //Define the reaction region with a weight function
+    //DN determines the dimension of interest: x=1, y=2, xy=3 (rectangular)
+    //rCUT is the cutoff (same as CAP, regardless if CAP=0)
     {
+        
+        std::string filename = "output/RxnWeight.dat";
+        std::ofstream outfile(filename, std::ios::app);
+       
+        switch (DN)
+        {
+        case 1:
+            for (int i=0; i < ni; ++i)
+            {
+            for (int j=0; j < nj; ++j)
+            {
+                if (gridd.xg[i] > rCUT)
+                {
+                    gridd.wt[i][j] = 1;
+                }
+                else
+                {
+                    gridd.wt[i][j] = 0; 
+                }
+            }
+            }
+        break;
+        
+        case 2:
+            for (int i=0; i < ni; ++i)
+            {
+            for (int j=0; j < nj; ++j)
+            {
+                if (gridd.yg[i] > rCUT)
+                {
+                    gridd.wt[i][j] = 1;
+                }
+                else
+                {
+                    gridd.wt[i][j] = 0; 
+                }
+            }
+            }
+        break;
+        
+        case 3:
+            //This version is intended for use with CAP, defines a survival probability instead (1-RxnProb)
+            for (int i=0; i < ni; ++i)
+            {
+            for (int j=0; j < nj; ++j)
+            {
+				if (std::abs(gridd.xg[i]) > rCUT or std::abs(gridd.yg[j]) > rCUT)
+				{
+					gridd.wt[i][j] = 0;
+				}
+                else
+                {
+                    gridd.wt[i][j] = 1;
+                }
+            }
+            }
+        break;
+
+        default:
+            std::cout << "WARNING: RxnWeight dimensions 'DN' undefined \n";
+            break;
+        }
+
         for (int i=0; i < ni; ++i)
         {
-            if (gridd.xg[i]>0)
-            {
-                gridd.wt[i] = 1;
-            }
-            else
-            {
-                gridd.wt[i] = 0; 
-            }
+        for (int j=0; j < nj; ++j)
+        {
+            outfile << gridd.xg[i] << " " << gridd.yg[j] << " " << gridd.wt[i][j] <<'\n';
+        }
+        outfile << '\n'; //Blank line for gnuplot
         }
     }
 
-    void RxnProb(GridData &gridd, double t)
-    //For the double well system
+    void RxnProb(GridData &gridd, double t, double ts)
+    //Compute flux and reaction/survival probabilities (based on how weights are defined)
     {
 
+    std::string filename1 = "output/RxnProb.dat";
+    std::ofstream outfile1(filename1, std::ios::app);
+
+    std::string filename2 = "output/Flux.dat";
+    std::ofstream outfile2(filename2, std::ios::app);
+
+    cplx flux = 0.0;
+    outfile1 << t << " ";
+    outfile2 << t << " ";
+    
     for (int n = 0; n < ns; ++n)
     {
         cplx sum = 0.0;
+
+
         for (int i = 0; i < ni; ++i)
         {
             for (int j = 0; j < nj; ++j)
             {
-                sum += std::conj(gridd.psi[i][j][n]) * gridd.psi[i][j][n] * gridd.wt[i]; //Sum with weighting funciton (1 in reaction region 0 otherwise)
+                sum += std::conj(gridd.psi[i][j][n]) * gridd.psi[i][j][n] * gridd.wt[i][j]; //Sum with weighting funciton (1 in reaction region 0 otherwise)
             }
         }
-        gridd.c[n] = sum;
+
+        if(t > 0) flux += (sum - gridd.rc[n])/ts; //Compute flux as difference from last point over all states
+        gridd.rc[n] = sum;
+
     }
 
-        std::string filename = "output/RxnProb.dat";
-        std::ofstream outfile(filename, std::ios::app);
-        outfile << t << " " << std::real(gridd.c[0]) 
-                     << '\n';
+        outfile1 << std::real(gridd.rc[0]) + std::real(gridd.rc[1]) << " ";
+        outfile2 << std::real(flux) << " ";
+
+        outfile1 << '\n';
+        outfile2 << '\n';
 
     }
 }
