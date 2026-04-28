@@ -1,0 +1,50 @@
+# Plot Flux
+# Output: png file
+#Usage gnuplot -c plot_flux.gscript nstates
+
+ns = int(ARG1)
+
+##########################
+# Output settings
+##########################
+
+set terminal pngcairo enhanced color font 'Times-New-Roman,20'
+
+##########################
+# Labels and styling
+##########################
+set xlabel "Time (Dau)"
+set ylabel "Flux"
+
+##########################
+# Line styles
+##########################
+set style line 1 lc rgb "red" lw 3 dashtype solid # Real
+set style line 2 lc rgb "blue" lw 3 dashtype solid # Imaginary
+set style line 3 lc rgb "green" lw 3 dashtype "_" # Imaginary
+
+##########################
+# Plot
+##########################
+do for [i=1:ns] {
+
+set title sprintf("Flux on state %i", i)
+set output sprintf("output/Flux_state_%i.png", i)
+plot \
+    "output/Flux.dat" using 1:i+1 with lines ls 1 title "Fux_x",\
+    "output/Flux.dat" using 1:i+ns+1 with lines ls 2 title "Flux_y"
+}
+
+col = int(ns*2+2)
+set title "Total Flux"
+set output "output/Total_Flux.png"
+plot \
+    "output/Flux.dat" using 1:col with lines ls 1 title "Fux_x",\
+    "output/Flux.dat" using 1:col+1 with lines ls 2 title "Fux_y",\
+    "output/Flux.dat" using 1:col+2 with lines ls 3 title "Total Flux",\
+    
+
+##########################
+# Finish output
+##########################
+unset output

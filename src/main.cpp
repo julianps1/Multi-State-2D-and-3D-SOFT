@@ -52,9 +52,9 @@ int main()
               << "  h1   = " << wave::h1
               << "  h2   = " << wave::h2  << '\n';
     std::cout << "Complex Absorbing Potential (CAP) parameters:\n"
-              << "  rCAP  = " << grid::rCAP
-              << "  kCAP  = " << grid::kCAP
-              << "  DN    = " << grid::DN << '\n'; 
+              << "  rCAPx = " << grid::rCAPx
+              << "  rCAPy = " << grid::rCAPy
+              << "  kCAP  = " << grid::kCAP << '\n';
   
     //Initialize FFT
      fft::FFT2D(ni,nj);
@@ -84,12 +84,12 @@ int main()
         std::cout << "2-state system: Diagonalizing Potential... \n";  
         grid::pot_diag(gridd);
         }
-     grid::init_CAP(gridd, grid::rCAP, grid::kCAP);
+     grid::init_CAP(gridd, grid::rCAPx, grid::rCAPy, grid::kCAP);
      grid::write_potential(gridd);
      grid::init_exp(wave::dtsub, wave::dt2, gridd); //Precompute kinetic and potential phase factors for split operator method
     
     //Initialize Analysis functions for specific models
-    grid::RxnWeight(gridd, grid::DN, grid::rCAP); //May need to modify how weights are defined dependning on model
+    grid::RxnWeight(gridd, grid::rCAPx, grid::rCAPy); //May need to modify how weights are defined dependning on model
 
     //std::cout << "Initialization complete, starting time propagation... \n";
 
@@ -101,8 +101,9 @@ int main()
     grid::crosscorr(gridd, t); //Cross correlation with psi_ref
     grid::compute_populations(gridd, t); //Compute populations in each state
     grid::RxnProb(gridd, t, wave::dt); //Reaction probability for double well system
-    //grid::compute_moments(gridd, t, grid::nmom);
+    grid::compute_moments(gridd, t, grid::nmom);
     if(ns == 2) { grid::compute_adipopulations(gridd, t); } //Compute adiabatic populations for 2 state system, may throw error if ns!= 2
+    grid::compute_flux(gridd, grid::rCAPx,  grid::rCAPy, t);
     
     // Progress bar setup
     int total_steps = wave::tmax;
@@ -134,6 +135,7 @@ int main()
         grid::RxnProb(gridd, t, wave::dt); //Reaction probability, based on how weights are defined
         //grid::compute_moments(gridd, t, grid::nmom);
         if(ns == 2) { grid::compute_adipopulations(gridd, t); } //Compute adiabatic populations for 2 state system, may throw error if ns!= 2
+        grid::compute_flux(gridd, grid::rCAPx,  grid::rCAPy, t);
 
         if (it % wave::nwpackets == 0)
         {

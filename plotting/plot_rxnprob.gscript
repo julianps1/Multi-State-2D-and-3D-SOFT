@@ -23,19 +23,18 @@ set title "Reaction Probability"
 # Line styles
 ##########################
 set style line 1 lc rgb "red" lw 3 dashtype solid # Real
-set style line 2 lc rgb "blue" lw 3 dashtype solid # Imaginary
 
 ##########################
 # Plot
 ##########################
 plot \
-    "output/RxnProb.dat" using 1:2 with lines ls 1 notitle 
+    "output/RxnProb.dat" using 1:(1-$2) with lines ls 1 notitle 
 
-set title "Flux"
-set ylabel "Flux"
-set output "output/Flux.png"
+set title "Survival Probability"
+set ylabel "Survival"
+set output "output/SurvivalProb.png"
 plot \
-    "output/Flux.dat" using 1:2 with lines ls 1 notitle
+    "output/RxnProb.dat" using 1:2 with lines ls 1 notitle
 
 ##########################
 # Finish output

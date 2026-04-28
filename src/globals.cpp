@@ -22,7 +22,8 @@ static std::unordered_map<std::string,double*> double_params = {
     {"h0",   &wave::h0},
     {"h1",   &wave::h1},
     {"h2",   &wave::h2},
-    {"rCAP", &grid::rCAP},
+    {"rCAPx", &grid::rCAPx},
+    {"rCAPy", &grid::rCAPy},
     {"kCAP", &grid::kCAP},
 };
 
@@ -33,7 +34,6 @@ static std::unordered_map<std::string,int*> int_params = {
     {"istate", &grid::istate},
     {"pot_name", &grid::pot_name},
     {"nmom", &grid::nmom},
-    {"DN", &grid::DN},
 }; 
 
 void init(const std::string &fname)
@@ -44,10 +44,27 @@ void init(const std::string &fname)
 
     std::string name;
     double val;
+    bool legacy_rCAP_set = false;
+    bool rCAPx_set = false;
+    bool rCAPy_set = false;
+    double legacy_rCAP = 0.0;
+
     while (ifs >> name >> val) {
-     auto itd = double_params.find(name);
+      if (name == "rCAP") {
+          legacy_rCAP = val;
+          legacy_rCAP_set = true;
+          continue;
+      }
+
+      if (name == "DN") {
+          continue;
+      }
+
+      auto itd = double_params.find(name);
       if (itd != double_params.end()) {
           *(itd->second) = val;
+          if (name == "rCAPx") rCAPx_set = true;
+          if (name == "rCAPy") rCAPy_set = true;
            }
       else {
           auto iti = int_params.find(name);
@@ -58,5 +75,10 @@ void init(const std::string &fname)
             std::cerr << "Unknown parameter\n";
            } 
       }
+    }
+
+    if (legacy_rCAP_set) {
+        if (!rCAPx_set) grid::rCAPx = legacy_rCAP;
+        if (!rCAPy_set) grid::rCAPy = legacy_rCAP;
     }
   }

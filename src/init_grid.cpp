@@ -10,8 +10,8 @@
 grid::GridData gridd;
 
 namespace grid {
-	double xmin, ymin, xmax, ymax, dx, dy, an0, rCAP, kCAP;
-    int istate, iwa, pot_name, nmom, DN;
+	double xmin, ymin, xmax, ymax, dx, dy, an0, rCAPx, rCAPy, kCAP;
+    int istate, iwa, pot_name, nmom;
 
 	void init_psi(int istate, GridData &gridd)
     {	
@@ -148,7 +148,7 @@ namespace grid {
 		}
 	}
 
-	void init_CAP(GridData &gridd, double rCAP, double kCAP)
+	void init_CAP(GridData &gridd, double rCAPx, double rCAPy, double kCAP)
 	{
 		if (ns == 1)
 			{
@@ -156,15 +156,15 @@ namespace grid {
 				{
 				for (int j = 0; j < nj; ++j)
 				{
-					double t1 = std::abs(gridd.xg[i]) - rCAP;
+					double t1 = std::abs(gridd.xg[i]) - rCAPx;
 					if (t1 > 0)
 					{
-						gridd.v[i][j][0][0] +=  im * kCAP * t1 * t1;
+						gridd.v[i][j][0][0] += - im * kCAP * t1 * t1;
 					}
-					double t2 = std::abs(gridd.yg[j]) - rCAP;
+					double t2 = std::abs(gridd.yg[j]) - rCAPy;
 					if (t2 > 0)
 					{
-						gridd.v[i][j][0][0] +=  im * kCAP * t2 * t2;
+						gridd.v[i][j][0][0] += - im * kCAP * t2 * t2;
 					}
 				}
 				}
@@ -175,17 +175,17 @@ namespace grid {
 				{
 				for (int j = 0; j < nj; ++j)
 				{
-					double t1 = std::abs(gridd.xg[i]) - rCAP;
+					double t1 = std::abs(gridd.xg[i]) - rCAPx;
 					if (t1 > 0)
 					{
-						gridd.vd[i][j][0] +=  im * kCAP * t1 *t1;
-						gridd.vd[i][j][1] +=  im * kCAP * t1 *t1;
+						gridd.vd[i][j][0] += - im * kCAP * t1 *t1;
+						gridd.vd[i][j][1] += - im * kCAP * t1 *t1;
 					}
-					double t2 = std::abs(gridd.yg[j]) - rCAP;
+					double t2 = std::abs(gridd.yg[j]) - rCAPy;
 					if (t2 > 0)
 					{
-						gridd.vd[i][j][0] +=  im * kCAP * t2 *t2;
-						gridd.vd[i][j][1] +=  im * kCAP * t2 *t2;
+						gridd.vd[i][j][0] += - im * kCAP * t2 *t2;
+						gridd.vd[i][j][1] += - im * kCAP * t2 *t2;
 					}
 				}
 				}

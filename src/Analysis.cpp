@@ -17,8 +17,9 @@ void compute_moments(GridData &gridd, double t, int nmom)
 {
     std::string filename = "output/moments.dat";
     std::ofstream outfile(filename, std::ios::app);
+    if (t == 0) outfile << "#t,<x>,<y>,<x^2>,<xy>,<y^2>..." << '\n'; //File header
 
-    if (ns != 1) std::cout << "WARNING: MOMENTS ONLY IMPLEMENTED FOR GROUND STATE \n";
+    if (ns != 1) {std::cout << "WARNING: MOMENTS ONLY IMPLEMENTED FOR GROUND STATE \n"; return;}
 
     double cmom = 0.0; 
 
@@ -46,7 +47,7 @@ void compute_populations(GridData &gridd, double t)
 {
     std::string filename = "output/populations.dat";
     std::ofstream outfile(filename, std::ios::app);
-    //outfile << "#t,pop0,pop1\n"; //File header
+    if (t == 0) outfile << "#t,pop0,pop1\n"; //File header
 
     outfile << t << " ";
     for (int n = 0; n < ns; ++n)
@@ -69,7 +70,7 @@ void compute_adipopulations(GridData &gridd, double t)
 {
     std::string filename = "output/adipopulations.dat";
     std::ofstream outfile(filename, std::ios::app);
-    //outfile << "#t,pop0,pop1\n"; //File header
+    if (t == 0) outfile << "#t,pop0,pop1\n"; //File header
 
     //FOR TWO STATES ONLY
 
@@ -253,58 +254,20 @@ void write_potential(GridData &gridd)
     outfile << '\n'; //Blank line after all states appended
 
     }
-    void RxnWeight(GridData &gridd, int DN, double rCUT)
-    //Define the reaction region with a weight function
-    //DN determines the dimension of interest: x=1, y=2, xy=3 (rectangular)
-    //rCUT is the cutoff (same as CAP, regardless if CAP=0)
+    void RxnWeight(GridData &gridd, double rCUTx, double rCUTy)
+    //Define the reaction/survival region with a weight function
+    //rCUTx,y is the cutoff in x,y (can be different, if you want to include all values of a given dimension set the cutoff to the max)
     {
         
         std::string filename = "output/RxnWeight.dat";
         std::ofstream outfile(filename, std::ios::app);
        
-        switch (DN)
+        
+        for (int i=0; i < ni; ++i)
         {
-        case 1:
-            for (int i=0; i < ni; ++i)
-            {
             for (int j=0; j < nj; ++j)
             {
-                if (gridd.xg[i] > rCUT)
-                {
-                    gridd.wt[i][j] = 1;
-                }
-                else
-                {
-                    gridd.wt[i][j] = 0; 
-                }
-            }
-            }
-        break;
-        
-        case 2:
-            for (int i=0; i < ni; ++i)
-            {
-            for (int j=0; j < nj; ++j)
-            {
-                if (gridd.yg[i] > rCUT)
-                {
-                    gridd.wt[i][j] = 1;
-                }
-                else
-                {
-                    gridd.wt[i][j] = 0; 
-                }
-            }
-            }
-        break;
-        
-        case 3:
-            //This version is intended for use with CAP, defines a survival probability instead (1-RxnProb)
-            for (int i=0; i < ni; ++i)
-            {
-            for (int j=0; j < nj; ++j)
-            {
-				if (std::abs(gridd.xg[i]) > rCUT or std::abs(gridd.yg[j]) > rCUT)
+				if (gridd.xg[i] > rCUTx or gridd.yg[j] > rCUTy)
 				{
 					gridd.wt[i][j] = 0;
 				}
@@ -313,12 +276,6 @@ void write_potential(GridData &gridd)
                     gridd.wt[i][j] = 1;
                 }
             }
-            }
-        break;
-
-        default:
-            std::cout << "WARNING: RxnWeight dimensions 'DN' undefined \n";
-            break;
         }
 
         for (int i=0; i < ni; ++i)
@@ -334,16 +291,15 @@ void write_potential(GridData &gridd)
     void RxnProb(GridData &gridd, double t, double ts)
     //Compute flux and reaction/survival probabilities (based on how weights are defined)
     {
+    (void)ts;
 
     std::string filename1 = "output/RxnProb.dat";
     std::ofstream outfile1(filename1, std::ios::app);
+    if (ts == 0) outfile1 << "#t,surv_prob,rxn_prob\n"; //File header
 
-    std::string filename2 = "output/Flux.dat";
-    std::ofstream outfile2(filename2, std::ios::app);
-
-    cplx flux = 0.0;
+    //cplx flux = 0.0;
     outfile1 << t << " ";
-    outfile2 << t << " ";
+    //outfile2 << t << " ";
     
     for (int n = 0; n < ns; ++n)
     {
@@ -358,16 +314,108 @@ void write_potential(GridData &gridd)
             }
         }
 
-        if(t > 0) flux += (sum - gridd.rc[n])/ts; //Compute flux as difference from last point over all states
+        //if(t > 0) flux += (sum - gridd.rc[n])/ts; //Compute flux as difference from last point over all states
         gridd.rc[n] = sum;
 
     }
 
-        outfile1 << std::real(gridd.rc[0]) + std::real(gridd.rc[1]) << " ";
-        outfile2 << std::real(flux) << " ";
+        outfile1 << std::real(gridd.rc[0]) + std::real(gridd.rc[1]) << " " << 1 - std::real(gridd.rc[0]) - std::real(gridd.rc[1]) << " "; //Survival probability is 1 - reaction probability (for two states, just sum over both)
+        //outfile2 << std::real(flux) << " ";
 
         outfile1 << '\n';
-        outfile2 << '\n';
+        //outfile2 << '\n';
+
+    }
+
+    double cent_diff(GridData &gridd, int ns, int i, int j, int xy)
+    {
+        
+        double p1 = 0.0;
+        double p2 = 0.0;
+        double h = 1/dy/dx; //psi is stored as psi*sqrt(dx*dy), need to remove dy,dx from density
+        
+        switch (xy)
+        {
+        case 1: //Diff in x
+            p1 = h * std::norm(gridd.psi[i+1][j][ns])/dx;
+            p2 = h * std::norm(gridd.psi[i-1][j][ns])/dx;
+            break;
+       
+        case 2: //Diff in y
+            p1 = h * std::norm(gridd.psi[i][j+1][ns])/dy;
+            p2 = h * std::norm(gridd.psi[i][j-1][ns])/dy;
+            break;
+
+        default:
+            break;
+        }
+
+        double cdiff = 0.5 * (p1 - p2);
+
+        return cdiff;
+
+    }
+
+
+    void compute_flux(GridData &gridd, const double rCAPx, const double rCAPy, double t)
+    {
+
+        int rxi = round((rCAPx - xmin)/dx);
+        int ryi = round((rCAPy - ymin)/dy);
+
+        //Flux is over a total area (in this case a line along a given direction) for now total length for rectangular borders this may need to be modified
+        double Ay = ymax - ymin;
+        double Ax = xmax - xmin;
+
+
+        int fluxflagx = 1;
+        int fluxflagy = 1;
+        double fluxxt = 0.0;
+        double fluxyt = 0.0;
+        double fluxx = 0.0;
+        double fluxy = 0.0;
+
+        if (rCAPx == xmax) fluxflagx = 0;
+        if (rCAPy == ymax) fluxflagy = 0;
+
+        //std::cout << "PRINTING rxi, " << gridd.xg[rxi] << '\n';
+
+
+        std::string filename = "output/Flux.dat";
+        std::ofstream outfile(filename, std::ios::app);
+        if (t == 0) outfile << "#flux in x for state0..ns, flux in y for state 0..ns, flux in x on all states, flux in y on all states, total flux \n";
+        outfile << t << " ";
+
+        for (int n = 0; n < ns; ++n)
+        {
+
+            fluxx = 0.0;
+
+            for (int j = 0; j < nj; ++j)
+            {
+                fluxx += fluxflagx * cent_diff(gridd, n, rxi, j, 1); //Flux in x, summing all cent diffs in x over y 
+            }
+
+            outfile << fluxx/Ay << " ";
+            fluxxt += fluxx; 
+
+        }
+
+        for (int n = 0; n < ns; ++n)
+        {
+            fluxy = 0.0;        
+            
+            for (int i = 0; i < ni; ++i)
+            {
+                fluxy += fluxflagy * cent_diff(gridd, n, i, ryi, 2); //Flux in y, summing all cent diffs in y over x 
+            }
+
+            outfile << fluxy/Ax << " ";
+            fluxyt += fluxy;
+        
+        }
+
+        outfile << fluxxt/Ax << " " << fluxyt/Ay << " " << fluxxt/Ax + fluxyt/Ay << '\n';
 
     }
 }

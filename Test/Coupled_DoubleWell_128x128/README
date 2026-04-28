@@ -6,7 +6,7 @@ Parameters:
 constexpr double eta = 1/1.3544;
 constexpr double b =  1.0;
 constexpr double c =  1.0;
-constexpr double d = 0.0; //Linear Coupling
+constexpr double d = 1.0; //Linear Coupling
 
 
 After compilation or modification this model can be run to compare results and ensure no bugs were introduced. The input file to run the calculation is in INq, grid parameters are defiend in globals.hpp. Data can be compared to the .dat files in this folder. 

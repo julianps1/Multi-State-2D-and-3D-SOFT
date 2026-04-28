@@ -27,16 +27,17 @@ namespace wave {
     {
         double ame = 1836.15;
 
-        double amh  = ame * 1.008 * h1;
-        double amd  = ame * 1.008 * h2;
-        double amet = ame * h0;
+        double amf  = ame * h1;
+        double amh  = ame * h2;
+        double amna = ame * h0;
 
-        amc = amet * (amh + amd) / (amet + amh + amd);
-        amx = amh * amd / (amh + amd);
-        amy = amx;
+        //amc = amet * (amh + amd) / (amet + amh + amd);
+        amx = amna * amh / (amna + amh); // Reduced mass of NaH
+        amy = amh * amf / (amh + amf); // Reduced mass of HF
+        //amy = amx;
 
-        std::cout << "REDUCED MASS OF H2 " << amx << std::endl;
-        std::cout << "MASS OF THE COM " << amc << std::endl;
+        std::cout << "REDUCED MASS OF HF " << amy << std::endl;
+        std::cout << "REDUCED MASS OF NaH " << amx << std::endl;
     }
 
 }

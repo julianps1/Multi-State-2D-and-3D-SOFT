@@ -13,13 +13,10 @@ set colorbox
 set cblabel "V"
 #set cbrange [0:1e-3]
 
-set output "output/theta.png"
-set title "v12"
-splot "output/theta.dat" u 1:2:3 with pm3d
-
 set output "output/RxnWeight.png"
 set title "Weights"
 splot "output/RxnWeight.dat" u 1:2:3 with pm3d
+
 
 # list of columns and names
 cols = "3 4 5 6 7 8 9 10 11"
@@ -35,3 +32,7 @@ do for [i=1:words(cols)] {
 
     splot file using 1:2:col with pm3d
 }
+
+set output "output/theta.png"
+set title "v12"
+splot "output/theta.dat" u 1:2:3 with pm3d

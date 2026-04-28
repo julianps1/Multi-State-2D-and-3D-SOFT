@@ -2,8 +2,8 @@
 # Usage: gnuplot -e "dim='x';val=4.00787;tol=1e-6" plot_theta_x4.gp
 # Default: slice in x at val
 
-dim = "x"
-val = 1.5748
+dim = "y"
+val = 1.35294
 #val = 0.023622
 tol = 1e-6
 
