@@ -4,11 +4,13 @@
 #include <filesystem>
 #include <cmath>
 #include <fftw3.h>
+#include <vector>
 
 #include "grid.hpp"
 #include "wave.hpp"
 #include "globals.hpp"
 #include "FFT2D.hpp"
+#include "Analysis.hpp"
 
 
 namespace grid {
@@ -70,26 +72,38 @@ void compute_adipopulations(GridData &gridd, double t)
 {
     std::string filename = "output/adipopulations.dat";
     std::ofstream outfile(filename, std::ios::app);
-    if (t == 0) outfile << "#t,pop0,pop1\n"; //File header
-
-    //FOR TWO STATES ONLY
+    if (t == 0)
+    {
+        outfile << "#t";
+        for (int n = 0; n < ns; ++n)
+        {
+            outfile << ",pop" << n;
+        }
+        outfile << "\n";
+    }
 
 
     outfile << t << " ";
-        double pop0 = 0.0;
-        double pop1 = 0.0;
+        double pops[ns] = {};
         for (int i = 0; i < ni; ++i)
         {
             for (int j = 0; j < nj; ++j)
             {
-               cplx z1 = (gridd.vcos[i][j] * gridd.psi[i][j][0] - gridd.vsin[i][j] * gridd.psi[i][j][1]);
-               cplx z2 = (gridd.vsin[i][j] * gridd.psi[i][j][0] + gridd.vcos[i][j] * gridd.psi[i][j][1]);
-            
-               pop0 += std::norm(z1);
-               pop1 += std::norm(z2);
+               for (int adi = 0; adi < ns; ++adi)
+               {
+                   cplx z = 0.0;
+                   for (int dia = 0; dia < ns; ++dia)
+                   {
+                       z += gridd.vvec[i][j][dia][adi] * gridd.psi[i][j][dia];
+                   }
+                   pops[adi] += std::norm(z);
+               }
             }
         }
-        outfile << pop0 << " " << pop1 << " ";
+        for (int n = 0; n < ns; ++n)
+        {
+            outfile << pops[n] << " ";
+        }
 
     outfile << "\n"; //New line after all states appended
 }
@@ -120,23 +134,54 @@ void write_potential(GridData &gridd)
     } 
     else 
     {
-    outfile << "#x,y,v00,v11,v01,Re(vd0),Im(vd0),Re(vd1),Im(vd1),vcos,vsin\n"; //File header
+    outfile << "#x,y";
+    for (int n1 = 0; n1 < ns; ++n1)
+    {
+        for (int n2 = 0; n2 < ns; ++n2)
+        {
+            outfile << ",Re(v" << n1 << n2 << "),Im(v" << n1 << n2 << ")";
+        }
+    }
+    for (int n = 0; n < ns; ++n)
+    {
+        outfile << ",Re(vd" << n << "),Im(vd" << n << ")";
+    }
+    for (int dia = 0; dia < ns; ++dia)
+    {
+        for (int adi = 0; adi < ns; ++adi)
+        {
+            outfile << ",vvec" << dia << adi;
+        }
+    }
+    outfile << "\n";
     
     for (int i = 0; i < ni; ++i)
     {
         for (int j = 0; j < nj; ++j)
         {
 		outfile << gridd.xg[i] << " "
-        		<< gridd.yg[j] << " "
-		        << std::real(gridd.v[i][j][0][0]) << " "
-		        << std::real(gridd.v[i][j][1][1]) << " "
-		        << std::real(gridd.v[i][j][0][1]) << " "
-		        << std::real(gridd.vd[i][j][0]) << " "
-		        << std::imag(gridd.vd[i][j][0]) << " "
-		        << std::real(gridd.vd[i][j][1]) << " "
-		        << std::imag(gridd.vd[i][j][1]) << " "
-		        << gridd.vcos[i][j] << " "
-		        << gridd.vsin[i][j] << "\n";
+        		<< gridd.yg[j] << " ";
+            for (int n1 = 0; n1 < ns; ++n1)
+            {
+                for (int n2 = 0; n2 < ns; ++n2)
+                {
+		            outfile << std::real(gridd.v[i][j][n1][n2]) << " "
+		                    << std::imag(gridd.v[i][j][n1][n2]) << " ";
+                }
+            }
+            for (int n = 0; n < ns; ++n)
+            {
+		        outfile << std::real(gridd.vd[i][j][n]) << " "
+		                << std::imag(gridd.vd[i][j][n]) << " ";
+            }
+            for (int dia = 0; dia < ns; ++dia)
+            {
+                for (int adi = 0; adi < ns; ++adi)
+                {
+                    outfile << gridd.vvec[i][j][dia][adi] << " ";
+                }
+            }
+            outfile << "\n";
         }
 
         // blank line for gnuplot grid formatting
@@ -215,11 +260,9 @@ void write_potential(GridData &gridd)
                 sum += std::conj(gridd.psi0[i][j][n]) * gridd.psi[i][j][n];
             }
         }
-        gridd.c[n] = sum;
-
-        outfile << t << " " << std::real(gridd.c[n]) 
-                     << " " << std::imag(gridd.c[n]) 
-                     << " " << std::norm(gridd.c[n]); 
+        outfile << t << " " << std::real(sum) 
+                     << " " << std::imag(sum) 
+                     << " " << std::norm(sum); 
 
     }
 
@@ -244,11 +287,9 @@ void write_potential(GridData &gridd)
                 sum += std::conj(gridd.psiref[i][j][n]) * gridd.psi[i][j][n];
             }
         }
-        gridd.c[n] = sum;
-
-        outfile << t << " " << std::real(gridd.c[n]) 
-                     << " " << std::imag(gridd.c[n]) 
-                     << " " << std::norm(gridd.c[n]); 
+        outfile << t << " " << std::real(sum) 
+                     << " " << std::imag(sum) 
+                     << " " << std::norm(sum); 
     }
 
     outfile << '\n'; //Blank line after all states appended
@@ -297,10 +338,9 @@ void write_potential(GridData &gridd)
     std::ofstream outfile1(filename1, std::ios::app);
     if (ts == 0) outfile1 << "#t,surv_prob,rxn_prob\n"; //File header
 
-    //cplx flux = 0.0;
     outfile1 << t << " ";
-    //outfile2 << t << " ";
-    
+
+    double survival_prob = 0.0;
     for (int n = 0; n < ns; ++n)
     {
         cplx sum = 0.0;
@@ -314,16 +354,12 @@ void write_potential(GridData &gridd)
             }
         }
 
-        //if(t > 0) flux += (sum - gridd.rc[n])/ts; //Compute flux as difference from last point over all states
-        gridd.rc[n] = sum;
+        survival_prob += std::real(sum);
 
     }
 
-        outfile1 << std::real(gridd.rc[0]) + std::real(gridd.rc[1]) << " " << 1 - std::real(gridd.rc[0]) - std::real(gridd.rc[1]) << " "; //Survival probability is 1 - reaction probability (for two states, just sum over both)
-        //outfile2 << std::real(flux) << " ";
-
-        outfile1 << '\n';
-        //outfile2 << '\n';
+    outfile1 << survival_prob << " " << 1 - survival_prob << " ";
+    outfile1 << '\n';
 
     }
 

@@ -2,8 +2,10 @@
 
 # compiler + flags
 CXX      := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra -Iinclude
-LDFLAGS = -lfftw3 -lm
+CXXFLAGS := -std=c++17 -Wall -Wextra -Iinclude -DQM2D_USE_LAPACKE
+LDFLAGS := -lfftw3 -lm 
+LAPACKE_LIBS ?= -llapacke -llapack -lblas
+LDFLAGS += $(LAPACKE_LIBS)
 
 # sources and derived object names
 #SRCS   := src/main.cpp src/grid.cpp src/wave.cpp src/globals.cpp

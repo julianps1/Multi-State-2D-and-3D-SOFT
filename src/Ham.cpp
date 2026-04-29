@@ -2,12 +2,14 @@
 #include "grid.hpp"
 #include "wave.hpp"
 #include "globals.hpp"
+#include "Analysis.hpp"
 #include "FFT2D.hpp"
 #include <fstream>
 #include <string>
 #include <filesystem>
 #include <cmath>
 #include <fftw3.h>
+
 
 namespace grid {
 

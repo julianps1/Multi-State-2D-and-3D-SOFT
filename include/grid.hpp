@@ -13,19 +13,15 @@ namespace grid {
 
     struct GridData
 	{
-	double ak2[ni][nj];
+    double ak2[ni][nj];
 
 	double xg[ni];
 	double yg[nj];
 
 	cplx v[ni][nj][ns][ns];
-	double vcos[ni][nj];
-	double vsin[ni][nj];
+	double vvec[ni][nj][ns][ns]; // diabatic row, adiabatic eigenvector column
     double wt[ni][nj];
 
-	cplx c[ns];
-    cplx rc[ns];
-    cplx cc[ns];
 	cplx vd[ni][nj][ns];
 
 	cplx psi[ni][nj][ns];
@@ -38,15 +34,16 @@ namespace grid {
     cplx expv[ni][nj][ns];
     cplx expk[ni][nj];
 
-
 	};
-    
+ 
+    //Potential and wf on grid
      void init_grid(double xmin, double ymin, double xmax, double ymax, GridData &gridd, double& an0);
      void init_psi(int istate, GridData &gridd);
      void init_psiref(int istate, GridData &gridd);
 	 void init_CAP(GridData &gridd, double rCAPx, double rCAPy, double kCAP);
-     void print_psi(int iwa, GridData &gridd);
-     void print_init_psi(GridData &gridd);
+     void pot_diag(GridData &gridd);
+     
+    //Potentials
      void pot_LandauSomb(GridData &gridd);
      void pot_Ferretti(GridData &gridd);
      void pot_doublewell(GridData &gridd);
@@ -56,28 +53,17 @@ namespace grid {
      void pot_NaFH(GridData &gridd);
      void pot_h2p(GridData &gridd);
      void pick_pot(int pot_name, GridData &gridd);
-     void compute_vpsi(GridData &gridd);
-     void pot_diag(GridData &gridd);
-     void write_potential(GridData &gridd);
+
+
+    //SO
      void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd);
      void apply_potential_phase(GridData &gridd);
      void apply_1_state_potential_phase(GridData &gridd);
      void init_exp(double ts, double ts2, GridData &gridd);
      void split(GridData &gridd, fft::FFT2D &f2d);
      void potential_step(GridData &gridd, int n);
-     void corr(GridData &gridd, double t);
-     void crosscorr(GridData &gridd, double t);     
-     void RxnWeight(GridData &gridd, double rCAPx, double rCAPy);
-     void RxnProb(GridData &gridd, double t, double ts);
-     void compute_populations(GridData &gridd, double t);
-     void compute_adipopulations(GridData &gridd, double t);
      void kinetic_step(fft::FFT2D &f2d, GridData &gridd, int n);
-     void compute_moments(GridData &gridd, double t, int nmom);
-     cplx overlapgg(const GridData &gridd, int n, const cplx wf2[][nj]);
-     cplx overlapggs(const GridData &gridd, int n, const cplx wf2[][nj][ns]);
-     void Ham(fft::FFT2D &f2d, GridData &gridd);
-     void compute_flux(GridData &gridd, const double rCAPx, const double rCAPy, double t);
-     double cent_diff(GridData &gridd, int ns, int i, int j, int xy);
+     
 }
 
 extern grid::GridData gridd;

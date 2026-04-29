@@ -26,19 +26,30 @@ void apply_kinetic_phase(cplx wf[][nj], const GridData &gridd)
 }
 void apply_potential_phase(GridData &gridd)
 {
-    //For a rotation matrix U:=[cos,-sin,sin,cos]
     for (int i = 0; i < ni; ++i)
     {
     for (int j = 0; j < nj; ++j)
     {
-        
-        cplx z1 = (gridd.vcos[i][j] * gridd.psi[i][j][0] - gridd.vsin[i][j] * gridd.psi[i][j][1]);
-        z1 *= gridd.expv[i][j][0];
-        cplx z2 = (gridd.vsin[i][j] * gridd.psi[i][j][0] + gridd.vcos[i][j] * gridd.psi[i][j][1]);
-        z2 *= gridd.expv[i][j][1];
-        
-        gridd.psi[i][j][0] = gridd.vcos[i][j] * z1 + gridd.vsin[i][j] * z2;
-        gridd.psi[i][j][1] =-gridd.vsin[i][j] * z1 + gridd.vcos[i][j] * z2;
+        cplx adiabatic[ns] = {};
+        cplx diabatic[ns] = {};
+
+        for (int adi = 0; adi < ns; ++adi)
+        {
+            for (int dia = 0; dia < ns; ++dia)
+            {
+                adiabatic[adi] += gridd.vvec[i][j][dia][adi] * gridd.psi[i][j][dia];
+            }
+            adiabatic[adi] *= gridd.expv[i][j][adi];
+        }
+
+        for (int dia = 0; dia < ns; ++dia)
+        {
+            for (int adi = 0; adi < ns; ++adi)
+            {
+                diabatic[dia] += gridd.vvec[i][j][dia][adi] * adiabatic[adi];
+            }
+            gridd.psi[i][j][dia] = diabatic[dia];
+        }
 
     }
     }
@@ -67,8 +78,10 @@ void init_exp(double ts, double ts2, GridData &gridd)
         }
         else
         {
-        gridd.expv[i][j][0] = std::exp(im * gridd.vd[i][j][0] * ts);
-        gridd.expv[i][j][1] = std::exp(im * gridd.vd[i][j][1] * ts);
+        for (int n = 0; n < ns; ++n)
+        {
+        gridd.expv[i][j][n] = std::exp(im * gridd.vd[i][j][n] * ts);
+        }
         }
         gridd.expk[i][j] = std::exp(im * ts2 * gridd.ak2[i][j]);
     }

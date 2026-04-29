@@ -1,5 +1,6 @@
 #include "grid.hpp"
 #include "wave.hpp"
+#include "Analysis.hpp"
 #include "globals.hpp"
 #include "FFT2D.hpp"
 #include <iostream>
@@ -79,9 +80,9 @@ int main()
      std::cout << "Initial energy...\n";
      grid::pick_pot(grid::pot_name, gridd);
      grid::Ham(f2d, gridd); //Initialize potential and Initial E
-     if (ns == 2)
+     if (ns > 1)
         {
-        std::cout << "2-state system: Diagonalizing Potential... \n";  
+        std::cout << ns << "-state system: Diagonalizing Potential... \n";  
         grid::pot_diag(gridd);
         }
      grid::init_CAP(gridd, grid::rCAPx, grid::rCAPy, grid::kCAP);
@@ -102,7 +103,7 @@ int main()
     grid::compute_populations(gridd, t); //Compute populations in each state
     grid::RxnProb(gridd, t, wave::dt); //Reaction probability for double well system
     grid::compute_moments(gridd, t, grid::nmom);
-    if(ns == 2) { grid::compute_adipopulations(gridd, t); } //Compute adiabatic populations for 2 state system, may throw error if ns!= 2
+    if(ns > 1) { grid::compute_adipopulations(gridd, t); }
     grid::compute_flux(gridd, grid::rCAPx,  grid::rCAPy, t);
     
     // Progress bar setup
@@ -134,7 +135,7 @@ int main()
         grid::compute_populations(gridd, t); //Compute populations in each state
         grid::RxnProb(gridd, t, wave::dt); //Reaction probability, based on how weights are defined
         //grid::compute_moments(gridd, t, grid::nmom);
-        if(ns == 2) { grid::compute_adipopulations(gridd, t); } //Compute adiabatic populations for 2 state system, may throw error if ns!= 2
+        if(ns > 1) { grid::compute_adipopulations(gridd, t); }
         grid::compute_flux(gridd, grid::rCAPx,  grid::rCAPy, t);
 
         if (it % wave::nwpackets == 0)

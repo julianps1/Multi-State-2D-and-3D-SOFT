@@ -2,6 +2,7 @@
 #include "grid.hpp"
 #include "wave.hpp"
 #include "globals.hpp"
+#include "linalg.hpp"
 #include <fstream>
 #include <cmath>
 #include <filesystem>
@@ -106,42 +107,75 @@ namespace grid {
 		
     	std::string filename = "output/theta.dat";
     	std::ofstream outfile(filename, std::ios::app);
-
-		constexpr double eps = 1e-12;
+		outfile << "#x,y,max_offdiag_after_diag\n";
 
 		for (int i = 0; i < ni; ++i)
 		{
 		for (int j = 0; j < nj; ++j)
     		{
-    			double v11 = std::real(gridd.v[i][j][0][0]);
-		    	double v22 = std::real(gridd.v[i][j][1][1]);
-			    double v12 = std::real(gridd.v[i][j][0][1]);
-			
-			//diagonalize
-			//Matrix is [cos,-sin,sin,cos]
+			std::vector<double> potential(ns * ns);
+			for (int n1 = 0; n1 < ns; ++n1)
+			{
+				for (int n2 = 0; n2 < ns; ++n2)
+				{
+					if (n1 == n2)
+					{
+						potential[n1 * ns + n2] = std::real(gridd.v[i][j][n1][n2]);
+					}
+					else
+					{
+						//ASSUMING SYMMETRIC COUPLING
+						const double v12 = std::real(gridd.v[i][j][n1][n2]);
+						potential[n1 * ns + n2] = (v12);
+					}
+				}
+			}
 
-			double dv = v11-v22;
-			if (std::abs(dv) <  eps) {dv = eps;}
+			const auto eig = linalg::diagonalize_symmetric(potential, ns);
 
-			double theta = 0.5 * std::atan(-2 * v12 / dv);
-			
+			for (int n = 0; n < ns; ++n)
+			{
+				gridd.vd[i][j][n] = eig.eigenvalues[n];
+			}
 
-			if (v11 > v22) //Need to perform a 180 degree rotation when the diabatic states are not properly ordered
- 			 {
-				gridd.vcos[i][j] = std::cos(theta + 0.5 * pi);
-				gridd.vsin[i][j] = std::sin(theta + 0.5 * pi);
-			 }
-			else
-			 {
-				gridd.vcos[i][j] = std::cos(theta);
-				gridd.vsin[i][j] = std::sin(theta);
-			 }
-			
-			double vd12 = 2 * gridd.vcos[i][j] * gridd.vcos[i][j] * v12 + gridd.vsin[i][j] * gridd.vcos[i][j] * (v11 - v22) - v12;
-			gridd.vd[i][j][0] = gridd.vcos[i][j]*gridd.vcos[i][j]*v11 + gridd.vsin[i][j]*gridd.vsin[i][j]*v22 - 2*gridd.vsin[i][j]*gridd.vcos[i][j]*v12;
-			gridd.vd[i][j][1] = gridd.vcos[i][j]*gridd.vcos[i][j]*v22 + gridd.vsin[i][j]*gridd.vsin[i][j]*v11 + 2*gridd.vsin[i][j]*gridd.vcos[i][j]*v12;
+			for (int row = 0; row < ns; ++row)
+			{
+				for (int col = 0; col < ns; ++col)
+				{
+					gridd.vvec[i][j][row][col] = eig.eigenvector(row, col);
+				}
+			}
 
-			outfile << gridd.xg[i] << " " << gridd.yg[j] << " " << vd12 << "\n";
+			double max_offdiag = 0.0;
+			for (int a = 0; a < ns; ++a)
+			{
+				for (int b = 0; b < ns; ++b)
+				{
+					if (a == b)
+					{
+						continue;
+					}
+
+					double value = 0.0;
+					for (int row = 0; row < ns; ++row)
+					{
+						for (int col = 0; col < ns; ++col)
+						{
+							value += gridd.vvec[i][j][row][a] *
+								potential[row * ns + col] *
+								gridd.vvec[i][j][col][b];
+						}
+					}
+
+					const double offdiag = std::abs(value);
+					if (offdiag > max_offdiag)
+					{
+						max_offdiag = offdiag;
+					}
+				}
+			}
+
+			outfile << gridd.xg[i] << " " << gridd.yg[j] << " " << max_offdiag << "\n";
 			
 			}
 			outfile << "\n"; //Blank line after each i row for gnuplot grid formatting
@@ -178,14 +212,18 @@ namespace grid {
 					double t1 = std::abs(gridd.xg[i]) - rCAPx;
 					if (t1 > 0)
 					{
-						gridd.vd[i][j][0] += - im * kCAP * t1 *t1;
-						gridd.vd[i][j][1] += - im * kCAP * t1 *t1;
+						for (int n = 0; n < ns; ++n)
+						{
+							gridd.vd[i][j][n] += - im * kCAP * t1 * t1;
+						}
 					}
 					double t2 = std::abs(gridd.yg[j]) - rCAPy;
 					if (t2 > 0)
 					{
-						gridd.vd[i][j][0] += - im * kCAP * t2 *t2;
-						gridd.vd[i][j][1] += - im * kCAP * t2 *t2;
+						for (int n = 0; n < ns; ++n)
+						{
+							gridd.vd[i][j][n] += - im * kCAP * t2 * t2;
+						}
 					}
 				}
 				}
