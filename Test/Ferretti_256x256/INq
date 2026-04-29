@@ -5,6 +5,9 @@ xmin -2.0
 xmax 5.0		
 ymin -3.0
 ymax 3.0
+rCAPx 5.0
+rCAPy 3.0
+kCAP 0.0
 alfa 22.22
 q0 2.0
 px0 0
@@ -16,4 +19,5 @@ h0 20000.0
 h1 6667.0
 h2 0.0
 istate 0
+nmom 0
 pot_name 1
