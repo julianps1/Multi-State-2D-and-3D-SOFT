@@ -31,12 +31,12 @@ namespace wave {
         double amh  = ame * h2;
         double amna = ame * h0;
 
-        amy = amna * (amh + amf) / (amna + amh + amf); //Center of mass
+        amx = amna * (amh + amf) / (amna + amh + amf); //Center of mass
         //amx = amna * amh / (amna + amh); // Reduced mass of NaH
-        amx = amh * amf / (amh + amf); // Reduced mass of HF
+        amy = amh * amf / (amh + amf); // Reduced mass of HF
 
-        std::cout << "REDUCED MASS OF HF " << amx << std::endl;
-        std::cout << "CENTER OF MASS " << amy << std::endl;
+        std::cout << "REDUCED MASS OF HF " << amy << std::endl;
+        std::cout << "CENTER OF MASS " << amx << std::endl;
     }
 
 }

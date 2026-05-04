@@ -47,8 +47,8 @@ void load_surface_file(const std::string &path, GridData &gridd, int n1, int n2)
 	for (int j = 0; j < nj; ++j) {
 		for (int i = 0; i < ni; ++i) {
 			if (!(infile >> x >> y >> value)) {
-				throw std::runtime_error(
-					"Unexpected end of NaFH potential file: " + path);
+				//throw std::runtime_error(
+					//"Unexpected end of NaFH potential file: " + path);
 			}
 
 		gridd.v[i][j][n1][n2] = value;
