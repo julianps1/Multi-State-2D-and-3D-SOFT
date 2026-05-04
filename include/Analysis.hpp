@@ -10,8 +10,8 @@ namespace grid
     void print_init_psi(GridData &gridd);
     void compute_vpsi(GridData &gridd);
     void write_potential(GridData &gridd);
-    void corr(GridData &gridd, double t);
-    void crosscorr(GridData &gridd, double t);     
+    void corr(GridData &gridd, double t, int istate);
+    void crosscorr(GridData &gridd, double t, int istate);     
     void RxnWeight(GridData &gridd, double rCAPx, double rCAPy);
     void RxnProb(GridData &gridd, double t, double ts);
     void compute_populations(GridData &gridd, double t);

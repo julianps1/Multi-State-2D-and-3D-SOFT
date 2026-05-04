@@ -2,7 +2,7 @@
 file = "output/v_0.dat" 
 base = substr(file,1,strlen(file)-4)
 
-set terminal pngcairo size 800,600
+set terminal pngcairo size 1000,1000 
 set xlabel "x"
 set ylabel "y"
 set view map
@@ -17,10 +17,9 @@ set output "output/RxnWeight.png"
 set title "Weights"
 splot "output/RxnWeight.dat" u 1:2:3 with pm3d
 
-
 # list of columns and names
-cols = "3 4 5 6 7 8 9 10 11"
-names = "V00 V11 V01 vd0_real vd0_imag vd1_real vd1_imag vcos vsin"
+cols = "3 4 5 6 7 8 9 10 11 12 13 14"
+names = "Re_V00 Im_V00 Re_V01 Im_V01 Re_V10 Im_V10 Re_V11 Im_V11 Re_VD0 Im_VD0 Re_VD1 Im_VD1"
 
 do for [i=1:words(cols)] {
 

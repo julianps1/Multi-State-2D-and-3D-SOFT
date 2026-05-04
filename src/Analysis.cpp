@@ -243,54 +243,55 @@ void write_potential(GridData &gridd)
          }
 	    }
 
-    void corr(GridData &gridd, double t)
+    void corr(GridData &gridd, double t, int istate)
     {
 
     std::string filename = "output/correl.dat";
     std::ofstream outfile(filename, std::ios::app);
     //outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
 
+    cplx sum = 0.0;
+    
     for (int n = 0; n < ns; ++n)
     {
-        cplx sum = 0.0;
         for (int i = 0; i < ni; ++i)
         {
             for (int j = 0; j < nj; ++j)
             {
-                sum += std::conj(gridd.psi0[i][j][n]) * gridd.psi[i][j][n];
+                sum += std::conj(gridd.psi0[i][j][istate]) * gridd.psi[i][j][n];
             }
         }
+    }
+
         outfile << t << " " << std::real(sum) 
                      << " " << std::imag(sum) 
                      << " " << std::norm(sum); 
-
-    }
 
     outfile << '\n'; //Blank line after all states appended
 
     }
 
-    void crosscorr(GridData &gridd, double t)
+    void crosscorr(GridData &gridd, double t, int istate)
     {
 
     std::string filename = "output/crosscorrel.dat";
     std::ofstream outfile(filename, std::ios::app);
     //outfile << "#t,Re(cn),Im(cn),|cn|^2\n"; //File header
     
+    cplx sum = 0.0;
     for (int n = 0; n < ns; ++n)
     {
-        cplx sum = 0.0;
         for (int i = 0; i < ni; ++i)
         {
             for (int j = 0; j < nj; ++j)
             {
-                sum += std::conj(gridd.psiref[i][j][n]) * gridd.psi[i][j][n];
+                sum += std::conj(gridd.psiref[i][j][istate]) * gridd.psi[i][j][n];
             }
         }
+    }
         outfile << t << " " << std::real(sum) 
                      << " " << std::imag(sum) 
                      << " " << std::norm(sum); 
-    }
 
     outfile << '\n'; //Blank line after all states appended
 

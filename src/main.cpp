@@ -98,8 +98,8 @@ int main()
     double t = 0.0;
 
     //Print initial values to outputs. Add/remove analysis modules as needed
-    grid::corr(gridd, t); //Autocorrelation
-    grid::crosscorr(gridd, t); //Cross correlation with psi_ref
+    grid::corr(gridd, t, grid::istate); //Autocorrelation
+    grid::crosscorr(gridd, t, grid::istate); //Cross correlation with psi_ref
     grid::compute_populations(gridd, t); //Compute populations in each state
     grid::RxnProb(gridd, t, wave::dt); //Reaction probability for double well system
     grid::compute_moments(gridd, t, grid::nmom);
@@ -130,8 +130,8 @@ int main()
         }
 
         //Analysis modules. Add/remove as needed
-        grid::corr(gridd, t); //Autocorrelation
-        grid::crosscorr(gridd, t); //Cross correlation with psi_ref
+        grid::corr(gridd, t, grid::istate); //Autocorrelation
+        grid::crosscorr(gridd, t, grid::istate); //Cross correlation with psi_ref
         grid::compute_populations(gridd, t); //Compute populations in each state
         grid::RxnProb(gridd, t, wave::dt); //Reaction probability, based on how weights are defined
         //grid::compute_moments(gridd, t, grid::nmom);
