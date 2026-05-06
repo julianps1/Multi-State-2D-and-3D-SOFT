@@ -1,5 +1,7 @@
 # qm2d_C
 
+Github repository: https://github.com/julianps1/Multi-State-2D-and-3D-SOFT
+
 A small C++ code for propagating a two-state wavepacket on a 2D grid using FFT-based split-operator time evolution.
 
 The project currently:

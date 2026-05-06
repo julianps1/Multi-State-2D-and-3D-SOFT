@@ -11,11 +11,24 @@ set pm3d map
 set palette rgb 33,13,10
 set colorbox
 set cblabel "V"
+set contour base
+set cntrparam levels auto 6
 #set cbrange [0:1e-3]
 
 set output "output/RxnWeight.png"
 set title "Weights"
-splot "output/RxnWeight.dat" u 1:2:3 with pm3d
+unset pm3d
+unset surface
+set contour base
+set cntrparam levels auto 6
+set table $Contours
+splot "output/RxnWeight.dat" u 1:2:3 with lines
+unset table
+set pm3d map
+set surface
+unset contour
+splot "output/RxnWeight.dat" u 1:2:3 with pm3d notitle, \
+      $Contours u 1:2:3 with lines lc rgb "black" lw 0.8 notitle
 
 # list of columns and names
 cols = "3 4 5 6 7 8 9 10 11 12 13 14"
@@ -29,9 +42,31 @@ do for [i=1:words(cols)] {
     set output base . "_" . name . ".png"
     set title name
 
-    splot file using 1:2:col with pm3d
+    unset pm3d
+    unset surface
+    set contour base
+    set cntrparam levels auto 6
+    set table $Contours
+    splot file using 1:2:col with lines
+    unset table
+    set pm3d map
+    set surface
+    unset contour
+    splot file using 1:2:col with pm3d notitle, \
+          $Contours u 1:2:3 with lines lc rgb "black" lw 0.8 notitle
 }
 
 set output "output/theta.png"
 set title "v12"
-splot "output/theta.dat" u 1:2:3 with pm3d
+unset pm3d
+unset surface
+set contour base
+set table $Contours
+set cntrparam levels auto 6
+splot "output/theta.dat" u 1:2:3 with lines
+unset table
+set pm3d map
+set surface
+unset contour
+splot "output/theta.dat" u 1:2:3 with pm3d notitle, \
+      $Contours u 1:2:3 with lines lc rgb "black" lw 0.8 notitle
