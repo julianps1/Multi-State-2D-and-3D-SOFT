@@ -16,6 +16,8 @@ The project currently:
 
 The codebase is actively in progress. 
 
+**3D CODE IS STILL BEING DEVELOPED AND IS NOT YET AVAILABLE**
+
 ## Requirements
 
 - `g++` with C++17 support
