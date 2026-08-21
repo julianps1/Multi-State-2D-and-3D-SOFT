@@ -125,6 +125,7 @@ void run_nafh_driver(const std::string &surface_dir)
 
 		for (int i = 0; i < ni; ++i) {
 			for (int j = 0; j < nj; ++j) {
+				gridd.v[i][j][0][1] *= grid::coupling_scale;
 				gridd.v[i][j][1][0] = gridd.v[i][j][0][1];
 			}
 		}

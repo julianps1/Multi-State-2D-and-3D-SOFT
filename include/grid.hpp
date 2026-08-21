@@ -8,7 +8,7 @@ namespace fft {
 }
 
 namespace grid {
-    extern double xmin, ymin, xmax, ymax, dx, dy, an0, rCAPx, rCAPy, kCAP; 
+    extern double xmin, ymin, xmax, ymax, dx, dy, an0, rCAPx, rCAPy, kCAP, coupling_scale;
     extern int istate,iwa,pot_name,nmom;
 
     struct GridData

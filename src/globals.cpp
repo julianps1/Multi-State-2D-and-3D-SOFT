@@ -25,6 +25,7 @@ static std::unordered_map<std::string,double*> double_params = {
     {"rCAPx", &grid::rCAPx},
     {"rCAPy", &grid::rCAPy},
     {"kCAP", &grid::kCAP},
+    {"coupling_scale", &grid::coupling_scale},
 };
 
 static std::unordered_map<std::string,int*> int_params = {
