@@ -12,6 +12,7 @@ grid::GridData gridd;
 
 namespace grid {
 	double xmin, ymin, xmax, ymax, dx, dy, an0, rCAPx, rCAPy, kCAP;
+	double coupling_scale = 1.0;
     int istate, iwa, pot_name, nmom;
 
 	void init_psi(int istate, GridData &gridd)

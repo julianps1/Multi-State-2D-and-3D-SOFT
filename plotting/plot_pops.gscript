@@ -24,19 +24,22 @@ set title "State Populations"
 ##########################
 set style line 1 lc rgb "red" lw 3 dashtype solid # Real
 set style line 2 lc rgb "blue" lw 3 dashtype solid # Imaginary
+set style line 3 lc rgb "black" lw 2 dashtype "-" # Total
 
 ##########################
 # Plot
 ##########################
 plot \
     "output/populations.dat" using 1:2 with lines ls 1 title "D_0",\
-    "output/populations.dat" using 1:3 with lines ls 2 title "D_1" 
+    "output/populations.dat" using 1:3 with lines ls 2 title "D_1",\
+    "output/populations.dat" using 1:($2+$3) with lines ls 3 title "Total"
 
 set output "output/AdiPopulations.png"
 set title "Adiabatic Populations"
 plot \
     "output/adipopulations.dat" using 1:2 with lines ls 1 title "S_0",\
-    "output/adipopulations.dat" using 1:3 with lines ls 2 title "S_1" 
+    "output/adipopulations.dat" using 1:3 with lines ls 2 title "S_1",\
+    "output/adipopulations.dat" using 1:($2+$3) with lines ls 3 title "Total"
 
 ##########################
 # Finish output
