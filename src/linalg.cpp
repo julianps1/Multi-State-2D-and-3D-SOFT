@@ -10,7 +10,7 @@ namespace linalg {
 
 double SymmetricEigenSystem::eigenvector(int row, int col) const
 {
-    return eigenvectors[row * n + col];
+    return eigenvectors[col * n + row];
 }
 
 bool has_lapacke()
@@ -33,7 +33,7 @@ SymmetricEigenSystem diagonalize_symmetric(std::vector<double> matrix, int n)
     result.eigenvalues.resize(n);
 
     const int info = LAPACKE_dsyev(
-        LAPACK_ROW_MAJOR,
+        LAPACK_COL_MAJOR,
         'V',
         'U',
         n,
